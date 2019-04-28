@@ -1,42 +1,44 @@
-import React, { Component } from 'react'
-import auth from '../firebase'
-import Header from '../components/header'
-import styled from 'styled-components'
-
+import React, { Component } from "react";
+import auth from "../firebase";
+import Layout from "../components/Layout";
+import styled from "styled-components";
+import Router from "next/router";
 
 class Home extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
-      currentUser: null,
-    }
+      currentUser: {}
+    };
   }
   componentDidMount() {
-
+    const currentUser = auth.currentUser;
+    this.setState({ currentUser })
   }
+
+  getUser = () => {};
+
   logout = e => {
-    e.preventDefault()
+    e.preventDefault();
     auth.signOut().then(response => {
       this.setState({
         currentUser: null
-      })
-    })
-  }
+      });
+    });
+    Router.push({
+      pathname: "/login"
+    });
+  };
   render() {
-    const { currentUser } = this.state;
-    console.log("CerrentUser",currentUser);
     return (
-        <Container>
-          <div>
-          <Header/>
-          {/* <p>Hello {currentUser.email}</p> */}
-          <button onClick={this.logout}>Logout</button>
-         </div>
-        </Container>
-    )
+      <Container>
+        <div>
+            <button onClick={this.logout}>Logout</button>
+        </div>
+      </Container>
+    );
   }
 }
-const Container = styled.div`
-`
-export default Home
+const Container = styled.div``;
+export default Home;

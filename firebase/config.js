@@ -1,3 +1,6 @@
+
+import firebase from 'firebase/app'
+
 const config = {
     apiKey: "AIzaSyCcM08_eUc8GzBpJ3j19__3h6VDwZi1nwU",
     authDomain: "idagdb.firebaseapp.com",
@@ -6,4 +9,7 @@ const config = {
     storageBucket: "idagdb.appspot.com",
     messagingSenderId: "969158868158"
   };
-  export default config
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(config)
+  }

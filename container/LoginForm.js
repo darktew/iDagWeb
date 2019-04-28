@@ -14,21 +14,7 @@ class LoginForm extends React.Component {
         }
       }
       componentDidMount() {
-        auth.onAuthStateChanged(user => {
-          if (user) {
-            this.setState({
-              currentUser: user
-            })
-          }
-        })
-      }
-      logout = e => {
-        e.preventDefault()
-        auth.signOut().then(response => {
-          this.setState({
-            currentUser: null
-          })
-        })
+    
       }
 
       onChange = e => {
