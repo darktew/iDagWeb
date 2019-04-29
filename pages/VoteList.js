@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
 import VoteList from '../container/VoteList';
-import Layout from "../components/Layout";
+import Layout from '../container/layout';
+import withAuthentication from "../components/Sessions/withAuthentication";
+import withAuthorization from '../components/Sessions/withAuthorization';
+import { compose } from 'recompose';
+import { connect} from 'react-redux';
+
 
 export class VoteListPage extends Component {
 
@@ -13,5 +18,4 @@ export class VoteListPage extends Component {
     )
   }
 }
-
-export default VoteListPage
+export default withAuthorization(false)(VoteListPage)

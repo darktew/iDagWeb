@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import auth from "../firebase";
-import Layout from "../components/Layout";
 import styled from "styled-components";
 import Router from "next/router";
 
@@ -25,6 +24,7 @@ class Home extends Component {
       this.setState({
         currentUser: null
       });
+      localStorage.clear();
     });
     Router.push({
       pathname: "/login"

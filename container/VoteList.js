@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import withRouter from "next/router";
-import Layout from "../components/Layout";
 import database from "../firebase/database";
 import styled from "styled-components";
 import Table from "@material-ui/core/Table";
@@ -29,18 +28,15 @@ export class VoteList extends Component {
     };
   }
   async componentDidMount() {
-    const dataChannel = await this.getChannel();
-    this.setState({ dataChannel });
+    this.getChannel();
   }
 
-  getChannel = () => {
+  getChannel = (setProps = {}) => {
     const dataChannel = database.ref("channel");
-    return new Promise((resolve, reject) => {
-      dataChannel.on("value", snapshot => {
-        const keys = Object.keys(snapshot.val());
-        const data = keys.map(key => ({ _id: key, ...snapshot.val()[key] }));
-        resolve(data);
-      });
+    dataChannel.on("value", snapshot => {
+      const keys = Object.keys(snapshot.val());
+      const data = keys.map(key => ({ _id: key, ...snapshot.val()[key] }));
+      this.setState({ dataChannel: data , ...setProps});
     });
   };
 
@@ -53,18 +49,20 @@ export class VoteList extends Component {
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
   };
-  openDiallogEdit = (channelId, channelName) => {
+  openDialogEdit = (channelId, channelName) => {
     console.log("open");
     this.setState({ open: true, channelId, channelName });
   };
   handleClose = () => {
     this.setState({ open: false });
   };
-  submitForm = () => {
+  submitForm = async e => {
+    e.preventDefault();
     const { channelId, channelName } = this.state;
-    database.ref(`channel/${channelId}`).update({
+    await database.ref(`channel/${channelId}`).update({
       name: channelName
     });
+    this.getChannel({open: false})
   };
 
   dialogShow = () => {
@@ -80,7 +78,7 @@ export class VoteList extends Component {
           <DialogContent>
             <DialogContentText>
               <InputForm
-                defaultValue={channelName}
+                defaultValue={channelName ? channelName : ''}
                 onChange={this.handleText}
               />
             </DialogContentText>
@@ -114,7 +112,7 @@ export class VoteList extends Component {
           <TableCell>{e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"}</TableCell>
           <TableCell align="center">
             <ActionButton
-              onClick={() => this.openDiallogEdit(e._id, e.name)}
+              onClick={() => this.openDialogEdit(e._id, e.name)}
               src="../static/image/pencil-edit-button.png"
             />
             <ActionButton
@@ -131,6 +129,9 @@ export class VoteList extends Component {
     const { dataChannel, page, rowsPerPage } = this.state;
     return (
       <Container>
+        <HeaderChannel>
+          asdasd
+        </HeaderChannel>
         <Table style={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
@@ -178,3 +179,10 @@ const InputForm = styled.input`
   padding: 0.5vw;
   font-size: 1vw;
 `;
+
+const HeaderChannel = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5vw 5vw 0 0;
+`

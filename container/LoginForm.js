@@ -1,7 +1,8 @@
 import React from 'react';
 import auth from '../firebase';
 import styled from 'styled-components';
-import Router from 'next/router'
+import Router from 'next/router';
+import { connect } from "react-redux";
     
 class LoginForm extends React.Component {
       constructor(props) {
@@ -26,14 +27,17 @@ class LoginForm extends React.Component {
       }
     
       onSubmit = e => {
+        console.log(e.target);
         e.preventDefault()
     
         const { email, password } = this.state
-        
         auth.signInWithEmailAndPassword(email, password)
         .then(response => {
           this.setState({
             currentUser: response.user
+          })
+          Router.push({
+            pathname: '/home'
           })
         })
         .catch(error => {
@@ -41,10 +45,6 @@ class LoginForm extends React.Component {
             message: error.message
           })
         });
-        Router.push({
-          pathname: '/home',
-          query: email
-        })
       }
     
       render() {
@@ -56,7 +56,7 @@ class LoginForm extends React.Component {
                 <img src="static/image/dish.png" />
             </Headers>
             <Bodys>
-                <form onSubmit={this.onSubmit}>
+                <form onSubmit={ e => this.onSubmit(e)}>
                   <div className="field">
                     <label className="label">Email</label>
                     <div className="control">
@@ -83,7 +83,7 @@ class LoginForm extends React.Component {
                      {message ? <p className="help is-danger">{message}</p> : null}
                   <div className="button">
                     <div className="control">
-                      <button className="button">Login</button>
+                      <button className="button" type="submit">Login</button>
                     </div>
                   </div>
                 </form>
@@ -143,8 +143,5 @@ align-items: center;
   width:100%;
 }
 `
-
-
-
 
 export default LoginForm

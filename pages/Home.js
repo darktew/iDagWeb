@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import Home from "../container/Home";
-import Layout from "../components/Layout";
+import Layout from "../container/layout";
+import withAuthorization from "../components/Sessions/withAuthorization";
 
 class HomePage extends Component {
-  
   render() {
     return (
-      <Layout >
-        <Home {...this.props}/>
+      <Layout>
+        <Home {...this.props} />
       </Layout>
     );
   }
 }
 
-export default HomePage;
+export default withAuthorization(true)(HomePage);
