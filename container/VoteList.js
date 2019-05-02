@@ -14,6 +14,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
+import Router from 'next/router'
 
 export class VoteList extends Component {
   constructor(props) {
@@ -65,6 +66,15 @@ export class VoteList extends Component {
     this.getChannel({open: false})
   };
 
+  nextPage = (id,value) => {
+    Router.push({
+      pathname: '/channelDetail',
+      query: {
+        _id: id
+      }
+    })
+  }
+
   dialogShow = () => {
     const { open, channelName } = this.state;
     return (
@@ -104,7 +114,7 @@ export class VoteList extends Component {
         <TableRow key={"rows" + i}>
           <TableCell
             align="left"
-            onClick={() => console.log("goto ")}
+            onClick={() => this.nextPage(e._id,e.detail)}
             style={{ cursor: "pointer" }}
           >
             {e.name}

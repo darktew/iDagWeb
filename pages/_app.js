@@ -11,10 +11,11 @@ import initStore from "../src/store";
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
-    return {
+    // const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : { ctx };
+    return { 
       pageProps: Component.getInitialProps
         ? await Component.getInitialProps(ctx)
-        : {}
+        : { }
     };
   }
   constructor() {
@@ -31,7 +32,7 @@ class MyApp extends App {
   }
 
   render() {
-    const { Component, pageProps, store } = this.props;
+    const { Component, pageProps, store,context } = this.props;
     return (
       <Container>
         <Head>
@@ -60,7 +61,7 @@ class MyApp extends App {
           >
             <CssBaseline />
             <Provider store={store}>
-              <Component pageContext={this.pageContext} {...pageProps} />
+              <Component pageContext={this.pageContext} {...pageProps} {...context} />
             </Provider>
           </MuiThemeProvider>
         </JssProvider>

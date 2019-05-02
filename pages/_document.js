@@ -7,6 +7,7 @@ import { ServerStyleSheet } from 'styled-components'
 class MyDocument extends Document {
   static async getInitialProps (ctx) {
     let pageContext;
+    console.log('pageContext', )
     const page = ctx.renderPage(Component => {
       const WrappedComponent = props => {
         pageContext = props.pageContext;

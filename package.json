@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "node app.js",
     "build": "next build",
     "start": "next start"
   },
@@ -13,8 +13,10 @@
   "dependencies": {
     "@material-ui/core": "^4.0.0-alpha.8",
     "@material-ui/icons": "^3.0.2",
+    "express": "^4.16.4",
     "firebase": "^5.9.2",
     "jss": "^9.8.7",
+    "moment": "^2.24.0",
     "next": "^8.1.0",
     "next-redux-wrapper": "^3.0.0-alpha.2",
     "react": "^16.8.6",
