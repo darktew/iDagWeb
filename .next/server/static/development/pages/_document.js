@@ -2311,7 +2311,7 @@ function (_Document) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log('pageContext');
+                console.log("pageContext");
                 page = ctx.renderPage(function (Component) {
                   var WrappedComponent = function WrappedComponent(props) {
                     pageContext = props.pageContext;

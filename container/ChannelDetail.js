@@ -6,10 +6,9 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import TablePagination from "@material-ui/core/TablePagination";
-import IconButton from '@material-ui/core/IconButton';
+import MoreIcon from '@material-ui/icons/MoreVert';
 import styled from "styled-components";
-
+import Router, {withRouter} from 'next/router'
 export class ChannelDetail extends Component {
   constructor(props) {
     super(props);
@@ -22,8 +21,9 @@ export class ChannelDetail extends Component {
   }
 
   getDetailChannel = () => {
-    const { query } = this.props;
-    const result = database.ref(`channel/${query._id}`);
+    const { router } = this.props;
+    console.log(this.props);
+    const result = database.ref(`channel/${router.query._id}`);
     result.on("value", snapshot => {
       const data = snapshot.val();
       if (moment().day() === 5) {
@@ -37,7 +37,7 @@ export class ChannelDetail extends Component {
     const { detailChannel } = this.state;
     return detailChannel.map((e, i) => {
       return (
-        <TableRow>
+        <TableRow key={"tableRow" + i}>
           <TableCell>{e.nameTitle}</TableCell>
           <TableCell align="left">{e.type}</TableCell>
           <TableCell align="left">{`${e.vote} โหวต`}</TableCell>
@@ -65,7 +65,7 @@ export class ChannelDetail extends Component {
   }
 }
 
-export default ChannelDetail;
+export default withRouter(ChannelDetail);
 
 /////////////////////////////////////
 

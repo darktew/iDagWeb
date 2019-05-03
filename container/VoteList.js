@@ -8,13 +8,16 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TablePagination from "@material-ui/core/TablePagination";
+import MoreIcon from '@material-ui/icons/MoreVert';
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
-import Router from 'next/router'
+import Router from 'next/router';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 export class VoteList extends Component {
   constructor(props) {
@@ -25,7 +28,8 @@ export class VoteList extends Component {
       page: 0,
       rowsPerPage: 5,
       open: false,
-      channelId: ""
+      channelId: "",
+      anchorEl: null,
     };
   }
   async componentDidMount() {
@@ -51,11 +55,17 @@ export class VoteList extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
   openDialogEdit = (channelId, channelName) => {
-    console.log("open");
     this.setState({ open: true, channelId, channelName });
   };
   handleClose = () => {
     this.setState({ open: false });
+  };
+  handleClickMenus = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleCloseMenus = () => {
+    this.setState({ anchorEl: null });
   };
   submitForm = async e => {
     e.preventDefault();
@@ -107,8 +117,8 @@ export class VoteList extends Component {
   };
 
   renderItem = () => {
-    const { dataChannel } = this.state;
-
+    const { dataChannel, anchorEl } = this.state;
+    const open = Boolean(anchorEl);
     return dataChannel.map((e, i) => {
       return (
         <TableRow key={"rows" + i}>
@@ -121,14 +131,28 @@ export class VoteList extends Component {
           </TableCell>
           <TableCell>{e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"}</TableCell>
           <TableCell align="center">
+            <MoreIcon 
+            aria-owns={anchorEl ? 'simple-menu' : 'defaults'}
+            aria-haspopup="true"
+            onClick={(event) => this.handleClickMenus(event)}
+            />
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={() => this.handleClose()}
+            >
+            <MenuItem onClick={() => this.openDialogEdit(e._id, e.name)}>
             <ActionButton
-              onClick={() => this.openDialogEdit(e._id, e.name)}
               src="../static/image/pencil-edit-button.png"
             />
+            </MenuItem>
+            <MenuItem onClick={() => console.log("delete to")}>
             <ActionButton
-              onClick={() => console.log("delete to")}
               src="../static/image/delete.png"
             />
+            </MenuItem>
+            </Menu>
           </TableCell>
         </TableRow>
       );

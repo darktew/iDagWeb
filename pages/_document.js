@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Document, { Head, Main, NextScript } from 'next/document';
-import flush from 'styled-jsx/server';
-import { ServerStyleSheet } from 'styled-components'
+import React from "react";
+import PropTypes from "prop-types";
+import Document, { Head, Main, NextScript } from "next/document";
+import flush from "styled-jsx/server";
+import { ServerStyleSheet } from "styled-components";
 
 class MyDocument extends Document {
-  static async getInitialProps (ctx) {
+  static async getInitialProps(ctx) {
     let pageContext;
-    console.log('pageContext', )
+    console.log("pageContext");
     const page = ctx.renderPage(Component => {
       const WrappedComponent = props => {
         pageContext = props.pageContext;
@@ -15,7 +15,7 @@ class MyDocument extends Document {
       };
 
       WrappedComponent.propTypes = {
-        pageContext: PropTypes.object.isRequired,
+        pageContext: PropTypes.object.isRequired
       };
 
       return WrappedComponent;
@@ -25,32 +25,35 @@ class MyDocument extends Document {
     if (pageContext) {
       css = pageContext.sheetsRegistry.toString();
     }
-    const sheet = new ServerStyleSheet()
-    const originalRenderPage = ctx.renderPage
+    const sheet = new ServerStyleSheet();
+    const originalRenderPage = ctx.renderPage;
     try {
-        ctx.renderPage = () => originalRenderPage({
-            enhanceApp: App => props => sheet.collectStyles(<App {...props} />)
-          })
+      ctx.renderPage = () =>
+        originalRenderPage({
+          enhanceApp: App => props => sheet.collectStyles(<App {...props} />)
+        });
 
-        const initialProps = await Document.getInitialProps(ctx)
-        return {
-          ...initialProps,
-          ...page,
-          pageContext,
-          styles: (
-            <React.Fragment>
-              <style
-                id="jss-server-side"
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: css }}
-              />
-              {initialProps.styles}{sheet.getStyleElement()}{flush() || null}
-            </React.Fragment>
-          )
-        }
-      } finally {
-        sheet.seal()
-      }
+      const initialProps = await Document.getInitialProps(ctx);
+      return {
+        ...initialProps,
+        ...page,
+        pageContext,
+        styles: (
+          <React.Fragment>
+            <style
+              id="jss-server-side"
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{ __html: css }}
+            />
+            {initialProps.styles}
+            {sheet.getStyleElement()}
+            {flush() || null}
+          </React.Fragment>
+        )
+      };
+    } finally {
+      sheet.seal();
+    }
   }
 
   render() {
@@ -68,7 +71,9 @@ class MyDocument extends Document {
           {/* PWA primary color */}
           <meta
             name="theme-color"
-            content={pageContext ? pageContext.theme.palette.primary.main : null}
+            content={
+              pageContext ? pageContext.theme.palette.primary.main : null
+            }
           />
           <link
             rel="stylesheet"
