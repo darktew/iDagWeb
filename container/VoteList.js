@@ -23,7 +23,8 @@ export class VoteList extends Component {
       channelName: "",
       page: 0,
       rowsPerPage: 5,
-      open: false,
+      openEdit: false,
+      openDelete: false,
       channelId: ""
     };
   }
@@ -50,13 +51,26 @@ export class VoteList extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
   openDialogEdit = (channelId, channelName) => {
-    console.log("open");
+    this.setState({ openEdit: true, channelId, channelName });
+  };
+  openDialogDelete = (channelId, channelName) => {
+    this.setState({ openDelete: true, channelId, channelName });
+  };
+  openDialogOpenVote = (channelId, channelName) => {
     this.setState({ open: true, channelId, channelName });
   };
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ openEdit: false,openDelete:false });
   };
-  submitForm = async e => {
+  submitEditForm = async e => {
+    e.preventDefault();
+    const { channelId, channelName } = this.state;
+    await database.ref(`channel/${channelId}`).update({
+      name: channelName
+    });
+    this.getChannel({openEdit: false})
+  };
+  submitOpenForm = async e => {
     e.preventDefault();
     const { channelId, channelName } = this.state;
     await database.ref(`channel/${channelId}`).update({
@@ -66,21 +80,48 @@ export class VoteList extends Component {
   };
 
   dialogShow = () => {
-    const { open, channelName } = this.state;
+    const { openEdit, channelName } = this.state;
     return (
       <Dialog
-        open={open}
+        open={openEdit}
         onClose={this.handleClose}
-        aria-labelledby="form-dialog-title"
+        aria-labelledby="form-dialog-edit"
       >
-        <DialogTitle id="form-dialog-title">แก้ไขข้อมูล</DialogTitle>
-        <form onSubmit={this.submitForm}>
+        <DialogTitle id="form-dialog-edit">แก้ไขข้อมูล</DialogTitle>
+        <form onSubmit={this.submitEditForm}>
           <DialogContent>
             <DialogContentText>
               <InputForm
                 defaultValue={channelName ? channelName : ''}
                 onChange={this.handleText}
               />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              ยกเลิก
+            </Button>
+            <Button type="submit" color="inherit">
+              บันทึก
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    );
+  };
+  dialogDelete = () => {
+    const { openDelete, channelName } = this.state;
+    return (
+      <Dialog
+        open={openDelete}
+        onClose={this.handleClose}
+        aria-labelledby="form-dialog-edit"
+      >
+        <DialogTitle id="form-dialog-edit">ลบข้อมูล {channelName}</DialogTitle>
+        <form onSubmit={this.submitEditForm}>
+          <DialogContent>
+            <DialogContentText>
+              ยืนยันการลบข้อมูล {channelName}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -111,12 +152,16 @@ export class VoteList extends Component {
           </TableCell>
           <TableCell>{e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"}</TableCell>
           <TableCell align="center">
+            <ActionButton 
+              onClick={() => console.log("No")}
+              src="../static/image/voting.png"
+              />
             <ActionButton
               onClick={() => this.openDialogEdit(e._id, e.name)}
               src="../static/image/pencil-edit-button.png"
             />
             <ActionButton
-              onClick={() => console.log("delete to")}
+              onClick={() => this.openDialogDelete(e.id,e.name)}
               src="../static/image/delete.png"
             />
           </TableCell>
@@ -130,7 +175,9 @@ export class VoteList extends Component {
     return (
       <Container>
         <HeaderChannel>
-          asdasd
+        <AddNewChanelButton onClick={() => console.log("AddNewVoteNow")}>
+          AddNewChanel
+        </AddNewChanelButton>
         </HeaderChannel>
         <Table style={{ minWidth: 700 }}>
           <TableHead>
@@ -158,6 +205,7 @@ export class VoteList extends Component {
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         {this.dialogShow()}
+        {this.dialogDelete()}
       </Container>
     );
   }
@@ -174,6 +222,18 @@ const ActionButton = styled.img`
   height: 1.5vw;
   margin: 0 0.5vw;
 `;
+const AddNewChanelButton = styled.button`
+  cursor: pointer;
+  width: fit-content;
+  height: 3vw;
+  margin: 0 0.5vw;
+  color:black;
+  background-color:red;
+  border-radius:10px;
+  font-size:2vw;
+`;
+
+
 
 const InputForm = styled.input`
   padding: 0.5vw;

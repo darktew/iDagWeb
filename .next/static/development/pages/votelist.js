@@ -27,7 +27,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/Users/nopicts/Desktop/idagweb/components/Sessions/withAuthentication.js";
+var _jsxFileName = "/Users/iapp/Desktop/idagweb/components/Sessions/withAuthentication.js";
 
 
 
@@ -123,7 +123,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/Users/nopicts/Desktop/idagweb/components/Sessions/withAuthorization.js";
+var _jsxFileName = "/Users/iapp/Desktop/idagweb/components/Sessions/withAuthorization.js";
 
 
 
@@ -228,7 +228,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/Users/nopicts/Desktop/idagweb/container/VoteList.js";
+var _jsxFileName = "/Users/iapp/Desktop/idagweb/container/VoteList.js";
 
 
 
@@ -294,8 +294,22 @@ function (_Component) {
     });
 
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "openDialogEdit", function (channelId, channelName) {
-      console.log("open");
+      _this.setState({
+        openEdit: true,
+        channelId: channelId,
+        channelName: channelName
+      });
+    });
 
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "openDialogDelete", function (channelId, channelName) {
+      _this.setState({
+        openDelete: true,
+        channelId: channelId,
+        channelName: channelName
+      });
+    });
+
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "openDialogOpenVote", function (channelId, channelName) {
       _this.setState({
         open: true,
         channelId: channelId,
@@ -305,11 +319,12 @@ function (_Component) {
 
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "handleClose", function () {
       _this.setState({
-        open: false
+        openEdit: false,
+        openDelete: false
       });
     });
 
-    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "submitForm",
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "submitEditForm",
     /*#__PURE__*/
     function () {
       var _ref = Object(_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])(
@@ -330,7 +345,7 @@ function (_Component) {
 
               case 4:
                 _this.getChannel({
-                  open: false
+                  openEdit: false
                 });
 
               case 5:
@@ -346,43 +361,80 @@ function (_Component) {
       };
     }());
 
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "submitOpenForm",
+    /*#__PURE__*/
+    function () {
+      var _ref2 = Object(_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])(
+      /*#__PURE__*/
+      _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(e) {
+        var _this$state2, channelId, channelName;
+
+        return _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                e.preventDefault();
+                _this$state2 = _this.state, channelId = _this$state2.channelId, channelName = _this$state2.channelName;
+                _context2.next = 4;
+                return _firebase_database__WEBPACK_IMPORTED_MODULE_13__["default"].ref("channel/".concat(channelId)).update({
+                  name: channelName
+                });
+
+              case 4:
+                _this.getChannel({
+                  open: false
+                });
+
+              case 5:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      return function (_x2) {
+        return _ref2.apply(this, arguments);
+      };
+    }());
+
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "dialogShow", function () {
-      var _this$state2 = _this.state,
-          open = _this$state2.open,
-          channelName = _this$state2.channelName;
+      var _this$state3 = _this.state,
+          openEdit = _this$state3.openEdit,
+          channelName = _this$state3.channelName;
       return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Dialog__WEBPACK_IMPORTED_MODULE_21__["default"], {
-        open: open,
+        open: openEdit,
         onClose: _this.handleClose,
-        "aria-labelledby": "form-dialog-title",
+        "aria-labelledby": "form-dialog-edit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 71
+          lineNumber: 85
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogTitle__WEBPACK_IMPORTED_MODULE_25__["default"], {
-        id: "form-dialog-title",
+        id: "form-dialog-edit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 76
+          lineNumber: 90
         },
         __self: this
       }, "\u0E41\u0E01\u0E49\u0E44\u0E02\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement("form", {
-        onSubmit: _this.submitForm,
+        onSubmit: _this.submitEditForm,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 77
+          lineNumber: 91
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContent__WEBPACK_IMPORTED_MODULE_23__["default"], {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 78
+          lineNumber: 92
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContentText__WEBPACK_IMPORTED_MODULE_24__["default"], {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 79
+          lineNumber: 93
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(InputForm, {
@@ -390,13 +442,13 @@ function (_Component) {
         onChange: _this.handleText,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 80
+          lineNumber: 94
         },
         __self: this
       }))), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogActions__WEBPACK_IMPORTED_MODULE_22__["default"], {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 86
+          lineNumber: 100
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26__["default"], {
@@ -404,7 +456,7 @@ function (_Component) {
         color: "secondary",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 87
+          lineNumber: 101
         },
         __self: this
       }, "\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26__["default"], {
@@ -412,7 +464,71 @@ function (_Component) {
         color: "inherit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 90
+          lineNumber: 104
+        },
+        __self: this
+      }, "\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01"))));
+    });
+
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "dialogDelete", function () {
+      var _this$state4 = _this.state,
+          openDelete = _this$state4.openDelete,
+          channelName = _this$state4.channelName;
+      return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Dialog__WEBPACK_IMPORTED_MODULE_21__["default"], {
+        open: openDelete,
+        onClose: _this.handleClose,
+        "aria-labelledby": "form-dialog-edit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 115
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogTitle__WEBPACK_IMPORTED_MODULE_25__["default"], {
+        id: "form-dialog-edit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 120
+        },
+        __self: this
+      }, "\u0E25\u0E1A\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25 ", channelName), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement("form", {
+        onSubmit: _this.submitEditForm,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 121
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContent__WEBPACK_IMPORTED_MODULE_23__["default"], {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 122
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContentText__WEBPACK_IMPORTED_MODULE_24__["default"], {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 123
+        },
+        __self: this
+      }, "\u0E22\u0E37\u0E19\u0E22\u0E31\u0E19\u0E01\u0E32\u0E23\u0E25\u0E1A\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25 ", channelName)), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogActions__WEBPACK_IMPORTED_MODULE_22__["default"], {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 127
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26__["default"], {
+        onClick: _this.handleClose,
+        color: "secondary",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 128
+        },
+        __self: this
+      }, "\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26__["default"], {
+        type: "submit",
+        color: "inherit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 131
         },
         __self: this
       }, "\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01"))));
@@ -425,7 +541,7 @@ function (_Component) {
           key: "rows" + i,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 104
+            lineNumber: 145
           },
           __self: this
         }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17__["default"], {
@@ -438,40 +554,50 @@ function (_Component) {
           },
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 105
+            lineNumber: 146
           },
           __self: this
         }, e.name), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17__["default"], {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 112
+            lineNumber: 153
           },
           __self: this
         }, e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17__["default"], {
           align: "center",
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 113
+            lineNumber: 154
           },
           __self: this
         }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(ActionButton, {
+          onClick: function onClick() {
+            return console.log("No");
+          },
+          src: "../static/image/voting.png",
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 155
+          },
+          __self: this
+        }), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(ActionButton, {
           onClick: function onClick() {
             return _this.openDialogEdit(e._id, e.name);
           },
           src: "../static/image/pencil-edit-button.png",
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 114
+            lineNumber: 159
           },
           __self: this
         }), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(ActionButton, {
           onClick: function onClick() {
-            return console.log("delete to");
+            return _this.openDialogDelete(e.id, e.name);
           },
           src: "../static/image/delete.png",
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 118
+            lineNumber: 163
           },
           __self: this
         })));
@@ -483,7 +609,8 @@ function (_Component) {
       channelName: "",
       page: 0,
       rowsPerPage: 5,
-      open: false,
+      openEdit: false,
+      openDelete: false,
       channelId: ""
     };
     return _this;
@@ -494,19 +621,19 @@ function (_Component) {
     value: function () {
       var _componentDidMount = Object(_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])(
       /*#__PURE__*/
-      _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-        return _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        return _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 this.getChannel();
 
               case 1:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
       function componentDidMount() {
@@ -518,68 +645,77 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this$state3 = this.state,
-          dataChannel = _this$state3.dataChannel,
-          page = _this$state3.page,
-          rowsPerPage = _this$state3.rowsPerPage;
+      var _this$state5 = this.state,
+          dataChannel = _this$state5.dataChannel,
+          page = _this$state5.page,
+          rowsPerPage = _this$state5.rowsPerPage;
       return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(Container, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 131
+          lineNumber: 176
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(HeaderChannel, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 132
+          lineNumber: 177
         },
         __self: this
-      }, "asdasd"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Table__WEBPACK_IMPORTED_MODULE_15__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(AddNewChanelButton, {
+        onClick: function onClick() {
+          return console.log("AddNewVoteNow");
+        },
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 178
+        },
+        __self: this
+      }, "AddNewChanel")), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Table__WEBPACK_IMPORTED_MODULE_15__["default"], {
         style: {
           minWidth: 700
         },
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 135
+          lineNumber: 182
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableHead__WEBPACK_IMPORTED_MODULE_18__["default"], {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 136
+          lineNumber: 183
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableRow__WEBPACK_IMPORTED_MODULE_19__["default"], {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 137
+          lineNumber: 184
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17__["default"], {
         align: "left",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 138
+          lineNumber: 185
         },
         __self: this
       }, "ChannelName"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17__["default"], {
         align: "left",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 139
+          lineNumber: 186
         },
         __self: this
       }, "StatusVote"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17__["default"], {
         align: "center",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 140
+          lineNumber: 187
         },
         __self: this
       }, "action"))), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableBody__WEBPACK_IMPORTED_MODULE_16__["default"], {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 143
+          lineNumber: 190
         },
         __self: this
       }, this.renderItem())), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TablePagination__WEBPACK_IMPORTED_MODULE_20__["default"], {
@@ -598,10 +734,10 @@ function (_Component) {
         onChangeRowsPerPage: this.handleChangeRowsPerPage,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 145
+          lineNumber: 192
         },
         __self: this
-      }), this.dialogShow());
+      }), this.dialogShow(), this.dialogDelete());
     }
   }]);
 
@@ -617,13 +753,17 @@ var ActionButton = styled_components__WEBPACK_IMPORTED_MODULE_14__["default"].im
   displayName: "VoteList__ActionButton",
   componentId: "j7rwdr-1"
 })(["cursor:pointer;width:1.5vw;height:1.5vw;margin:0 0.5vw;"]);
+var AddNewChanelButton = styled_components__WEBPACK_IMPORTED_MODULE_14__["default"].button.withConfig({
+  displayName: "VoteList__AddNewChanelButton",
+  componentId: "j7rwdr-2"
+})(["cursor:pointer;width:fit-content;height:3vw;margin:0 0.5vw;color:black;background-color:red;border-radius:10px;font-size:2vw;"]);
 var InputForm = styled_components__WEBPACK_IMPORTED_MODULE_14__["default"].input.withConfig({
   displayName: "VoteList__InputForm",
-  componentId: "j7rwdr-2"
+  componentId: "j7rwdr-3"
 })(["padding:0.5vw;font-size:1vw;"]);
 var HeaderChannel = styled_components__WEBPACK_IMPORTED_MODULE_14__["default"].div.withConfig({
   displayName: "VoteList__HeaderChannel",
-  componentId: "j7rwdr-3"
+  componentId: "j7rwdr-4"
 })(["display:flex;align-items:center;justify-content:flex-end;padding:0.5vw 5vw 0 0;"]);
 
 /***/ }),
@@ -671,7 +811,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/Users/nopicts/Desktop/idagweb/container/layout.js";
+var _jsxFileName = "/Users/iapp/Desktop/idagweb/container/layout.js";
 
 
 
@@ -61692,10 +61832,10 @@ if (false) {} else {
 
 /***/ }),
 
-/***/ "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fnopicts%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js!./":
-/*!*********************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fnopicts%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js ***!
-  \*********************************************************************************************************************************************************************************/
+/***/ "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fiapp%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js!./":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fiapp%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js ***!
+  \******************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -75516,7 +75656,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/Users/nopicts/Desktop/idagweb/pages/votelist.js";
+var _jsxFileName = "/Users/iapp/Desktop/idagweb/pages/votelist.js";
 
 
 
@@ -75560,14 +75700,14 @@ function (_Component) {
 
 /***/ }),
 
-/***/ 3:
-/*!*************************************************************************************************************************************!*\
-  !*** multi next-client-pages-loader?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fnopicts%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js ***!
-  \*************************************************************************************************************************************/
+/***/ 0:
+/*!**********************************************************************************************************************************!*\
+  !*** multi next-client-pages-loader?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fiapp%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js ***!
+  \**********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! next-client-pages-loader?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fnopicts%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js! */"./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fnopicts%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js!./");
+module.exports = __webpack_require__(/*! next-client-pages-loader?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fiapp%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js! */"./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fvotelist&absolutePagePath=%2FUsers%2Fiapp%2FDesktop%2Fidagweb%2Fpages%2Fvotelist.js!./");
 
 
 /***/ }),
@@ -75583,5 +75723,5 @@ module.exports = dll_6dc2816e14fab51b8269;
 
 /***/ })
 
-},[[3,"static/runtime/webpack.js"]]]);
+},[[0,"static/runtime/webpack.js"]]]);
 //# sourceMappingURL=votelist.js.map

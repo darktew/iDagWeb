@@ -2298,7 +2298,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/Users/nopicts/Desktop/idagweb/pages/_document.js";
+var _jsxFileName = "/Users/iapp/Desktop/idagweb/pages/_document.js";
 
 
 
