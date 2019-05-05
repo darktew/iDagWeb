@@ -6,13 +6,6 @@ import { withStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
   progress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    marginTop: "-50px",
-    marginLeft: "-50px",
-    width: "100px",
-    height: "100px"
   }
 });
 class Index extends Component {
@@ -43,4 +36,4 @@ Index.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles()(Index);
+export default withStyles(styles)(Index);

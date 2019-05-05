@@ -1101,8 +1101,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-var MyApp =
+var MyApp = next_redux_wrapper__WEBPACK_IMPORTED_MODULE_16___default()(_src_store__WEBPACK_IMPORTED_MODULE_17__["default"])(
 /*#__PURE__*/
 function (_App) {
   Object(_babel_runtime_corejs2_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_7__["default"])(MyApp, _App);
@@ -1184,25 +1183,22 @@ function (_App) {
       var _this$props = this.props,
           Component = _this$props.Component,
           pageProps = _this$props.pageProps,
-          store = _this$props.store,
-          context = _this$props.context;
-      return react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(next_app__WEBPACK_IMPORTED_MODULE_9__["Container"], null, react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(next_head__WEBPACK_IMPORTED_MODULE_10___default.a, null, react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement("title", null, "My page")), react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(react_jss_lib_JssProvider__WEBPACK_IMPORTED_MODULE_14___default.a, {
+          store = _this$props.store;
+      return react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(next_app__WEBPACK_IMPORTED_MODULE_9__["Container"], null, react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(next_head__WEBPACK_IMPORTED_MODULE_10___default.a, null, react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement("title", null, "NextJS - With Redux and Material UI")), react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(react_jss_lib_JssProvider__WEBPACK_IMPORTED_MODULE_14___default.a, {
         registry: this.pageContext.sheetsRegistry,
         generateClassName: this.pageContext.generateClassName
       }, react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_11__["MuiThemeProvider"], {
-        theme: this.pageContext.theme,
-        sheetsManager: this.pageContext.sheetsManager
+        theme: this.pageContext.theme
       }, react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(_material_ui_core_CssBaseline__WEBPACK_IMPORTED_MODULE_13___default.a, null), react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_12__["Provider"], {
         store: store
       }, react__WEBPACK_IMPORTED_MODULE_8___default.a.createElement(Component, Object(_babel_runtime_corejs2_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({
         pageContext: this.pageContext
-      }, pageProps, context))))));
+      }, pageProps))))));
     }
   }]);
 
   return MyApp;
-}(next_app__WEBPACK_IMPORTED_MODULE_9___default.a);
-
+}(next_app__WEBPACK_IMPORTED_MODULE_9___default.a));
 /* harmony default export */ __webpack_exports__["default"] = (next_redux_wrapper__WEBPACK_IMPORTED_MODULE_16___default()(_src_store__WEBPACK_IMPORTED_MODULE_17__["default"])(MyApp));
 
 /***/ }),
@@ -1263,7 +1259,7 @@ function createPageContext() {
     // This is needed in order to inject the critical CSS.
     sheetsRegistry: new jss__WEBPACK_IMPORTED_MODULE_1__["SheetsRegistry"](),
     // The standard class name generator.
-    generateClassName: new _material_ui_styles__WEBPACK_IMPORTED_MODULE_3__["createGenerateClassName"]()
+    generateClassName: Object(_material_ui_styles__WEBPACK_IMPORTED_MODULE_3__["createGenerateClassName"])()
   };
 }
 

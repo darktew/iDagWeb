@@ -3,7 +3,6 @@ import rootReducer from '../reducers';
 
 const initStore = () => {
   const store = createStore(rootReducer);
-
   return store;
 };
 
