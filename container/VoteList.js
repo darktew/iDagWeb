@@ -25,7 +25,10 @@ export class VoteList extends Component {
       rowsPerPage: 5,
       openEdit: false,
       openDelete: false,
-      channelId: ""
+      openVote:false,
+      openAddnew:false,
+      channelId: "",
+      timeCount:""
     };
   }
   async componentDidMount() {
@@ -44,6 +47,9 @@ export class VoteList extends Component {
   handleText = event => {
     this.setState({ channelName: event.target.value });
   };
+  handleTime = event => {
+    this.setState({ timeCount: event.target.value });
+  }
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -57,10 +63,13 @@ export class VoteList extends Component {
     this.setState({ openDelete: true, channelId, channelName });
   };
   openDialogOpenVote = (channelId, channelName) => {
-    this.setState({ open: true, channelId, channelName });
+    this.setState({ openVote: true, channelId, channelName });
+  };
+  openDialogAddnew = () => {
+    this.setState({ openAddnew: true });
   };
   handleClose = () => {
-    this.setState({ openEdit: false,openDelete:false });
+    this.setState({ openEdit: false,openDelete:false ,openVote:false,openAddnew:false});
   };
   submitEditForm = async e => {
     e.preventDefault();
@@ -70,13 +79,61 @@ export class VoteList extends Component {
     });
     this.getChannel({openEdit: false})
   };
-  submitOpenForm = async e => {
+  submitAddnewForm = async e => {
     e.preventDefault();
     const { channelId, channelName } = this.state;
-    await database.ref(`channel/${channelId}`).update({
-      name: channelName
+    await database.ref(`channel/${channelId}`).push({
+      name: channelName,
+      timeCount : "" ,
+      isVote:false
     });
-    this.getChannel({open: false})
+    this.getChannel({openAddnew: false})
+  };
+  submitOpenForm = async e => {
+    e.preventDefault();
+    const { channelId, timeCount} = this.state;
+    await database.ref(`channel/${channelId}`).update({
+      isVote: true ,
+      timeCount: timeCount
+    });
+    this.getChannel({openVote: false})
+  };
+  submitDeleteForm = async e => {
+    e.preventDefault();
+    const { channelId} = this.state;
+    await database.ref(`channel/${channelId}`).remove({
+    });
+    this.getChannel({openDelete: false})
+  };
+  dialogAddnew = () => {
+    const { openAddnew } = this.state;
+    return (
+      <Dialog
+        open={openAddnew}
+        onClose={this.handleClose}
+        aria-labelledby="form-dialog-edit"
+      >
+        <DialogTitle id="form-dialog-edit">เพิ่มข้อมูล</DialogTitle>
+        <form onSubmit={this.submitAddnewForm}>
+          <DialogContent>
+            <DialogContentText>
+              ชื่อ Channel
+              <InputForm
+                onChange={this.handleText}
+              />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              ยกเลิก
+            </Button>
+            <Button type="submit" color="inherit">
+              บันทึก
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    );
   };
 
   dialogShow = () => {
@@ -118,10 +175,41 @@ export class VoteList extends Component {
         aria-labelledby="form-dialog-edit"
       >
         <DialogTitle id="form-dialog-edit">ลบข้อมูล {channelName}</DialogTitle>
-        <form onSubmit={this.submitEditForm}>
+        <form onSubmit={this.submitDeleteForm}>
           <DialogContent>
             <DialogContentText>
               ยืนยันการลบข้อมูล {channelName}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              ยกเลิก
+            </Button>
+            <Button type="submit" color="inherit">
+              บันทึก
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    );
+  };
+  dialogOpenVote = () => {
+    const { openVote, channelName } = this.state;
+    return (
+      <Dialog
+        open={openVote}
+        onClose={this.handleClose}
+        aria-labelledby="form-dialog-edit"
+      >
+        <DialogTitle id="form-dialog-edit">เปิดโหวต {channelName}</DialogTitle>
+        <form onSubmit={this.submitOpenForm}>
+          <DialogContent>
+            <DialogContentText>
+              ใส่เวลาปิดโหวต
+              <InputForm
+                defaultValue={''}
+                onChange={this.handleTime}
+              />
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -153,7 +241,7 @@ export class VoteList extends Component {
           <TableCell>{e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"}</TableCell>
           <TableCell align="center">
             <ActionButton 
-              onClick={() => console.log("No")}
+              onClick={() => this.openDialogOpenVote(e.id,e.name)}
               src="../static/image/voting.png"
               />
             <ActionButton
@@ -175,7 +263,7 @@ export class VoteList extends Component {
     return (
       <Container>
         <HeaderChannel>
-        <AddNewChanelButton onClick={() => console.log("AddNewVoteNow")}>
+        <AddNewChanelButton onClick={() => this.openDialogAddnew()}>
           AddNewChanel
         </AddNewChanelButton>
         </HeaderChannel>
@@ -204,8 +292,10 @@ export class VoteList extends Component {
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
+        {this.dialogAddnew()}
         {this.dialogShow()}
         {this.dialogDelete()}
+        {this.dialogOpenVote()}
       </Container>
     );
   }

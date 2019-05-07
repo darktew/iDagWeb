@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -388,6 +388,12 @@ function (_Component) {
       });
     });
 
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "handleTime", function (event) {
+      _this.setState({
+        timeCount: event.target.value
+      });
+    });
+
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "handleChangePage", function (event, page) {
       _this.setState({
         page: page
@@ -418,16 +424,24 @@ function (_Component) {
 
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "openDialogOpenVote", function (channelId, channelName) {
       _this.setState({
-        open: true,
+        openVote: true,
         channelId: channelId,
         channelName: channelName
+      });
+    });
+
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "openDialogAddnew", function () {
+      _this.setState({
+        openAddnew: true
       });
     });
 
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "handleClose", function () {
       _this.setState({
         openEdit: false,
-        openDelete: false
+        openDelete: false,
+        openVote: false,
+        openAddnew: false
       });
     });
 
@@ -468,7 +482,7 @@ function (_Component) {
       };
     }());
 
-    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "submitOpenForm",
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "submitAddnewForm",
     /*#__PURE__*/
     function () {
       var _ref2 = Object(_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])(
@@ -483,13 +497,15 @@ function (_Component) {
                 e.preventDefault();
                 _this$state2 = _this.state, channelId = _this$state2.channelId, channelName = _this$state2.channelName;
                 _context2.next = 4;
-                return _firebase_database__WEBPACK_IMPORTED_MODULE_13__["default"].ref("channel/".concat(channelId)).update({
-                  name: channelName
+                return _firebase_database__WEBPACK_IMPORTED_MODULE_13__["default"].ref("channel/".concat(channelId)).push({
+                  name: channelName,
+                  timeCount: "",
+                  isVote: false
                 });
 
               case 4:
                 _this.getChannel({
-                  open: false
+                  openAddnew: false
                 });
 
               case 5:
@@ -505,43 +521,184 @@ function (_Component) {
       };
     }());
 
-    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "dialogShow", function () {
-      var _this$state3 = _this.state,
-          openEdit = _this$state3.openEdit,
-          channelName = _this$state3.channelName;
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "submitOpenForm",
+    /*#__PURE__*/
+    function () {
+      var _ref3 = Object(_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])(
+      /*#__PURE__*/
+      _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(e) {
+        var _this$state3, channelId, timeCount;
+
+        return _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                e.preventDefault();
+                _this$state3 = _this.state, channelId = _this$state3.channelId, timeCount = _this$state3.timeCount;
+                _context3.next = 4;
+                return _firebase_database__WEBPACK_IMPORTED_MODULE_13__["default"].ref("channel/".concat(channelId)).update({
+                  isVote: true,
+                  timeCount: timeCount
+                });
+
+              case 4:
+                _this.getChannel({
+                  openVote: false
+                });
+
+              case 5:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      return function (_x3) {
+        return _ref3.apply(this, arguments);
+      };
+    }());
+
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "submitDeleteForm",
+    /*#__PURE__*/
+    function () {
+      var _ref4 = Object(_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])(
+      /*#__PURE__*/
+      _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(e) {
+        var channelId;
+        return _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                e.preventDefault();
+                channelId = _this.state.channelId;
+                _context4.next = 4;
+                return _firebase_database__WEBPACK_IMPORTED_MODULE_13__["default"].ref("channel/".concat(channelId)).remove({});
+
+              case 4:
+                _this.getChannel({
+                  openDelete: false
+                });
+
+              case 5:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }));
+
+      return function (_x4) {
+        return _ref4.apply(this, arguments);
+      };
+    }());
+
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "dialogAddnew", function () {
+      var openAddnew = _this.state.openAddnew;
       return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Dialog__WEBPACK_IMPORTED_MODULE_21___default.a, {
-        open: openEdit,
+        open: openAddnew,
         onClose: _this.handleClose,
         "aria-labelledby": "form-dialog-edit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 85
+          lineNumber: 111
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogTitle__WEBPACK_IMPORTED_MODULE_25___default.a, {
         id: "form-dialog-edit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 90
+          lineNumber: 116
+        },
+        __self: this
+      }, "\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement("form", {
+        onSubmit: _this.submitAddnewForm,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 117
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContent__WEBPACK_IMPORTED_MODULE_23___default.a, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 118
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContentText__WEBPACK_IMPORTED_MODULE_24___default.a, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 119
+        },
+        __self: this
+      }, "\u0E0A\u0E37\u0E48\u0E2D Channel", react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(InputForm, {
+        onChange: _this.handleText,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 121
+        },
+        __self: this
+      }))), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogActions__WEBPACK_IMPORTED_MODULE_22___default.a, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 126
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
+        onClick: _this.handleClose,
+        color: "secondary",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 127
+        },
+        __self: this
+      }, "\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
+        type: "submit",
+        color: "inherit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 130
+        },
+        __self: this
+      }, "\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01"))));
+    });
+
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "dialogShow", function () {
+      var _this$state4 = _this.state,
+          openEdit = _this$state4.openEdit,
+          channelName = _this$state4.channelName;
+      return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Dialog__WEBPACK_IMPORTED_MODULE_21___default.a, {
+        open: openEdit,
+        onClose: _this.handleClose,
+        "aria-labelledby": "form-dialog-edit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 142
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogTitle__WEBPACK_IMPORTED_MODULE_25___default.a, {
+        id: "form-dialog-edit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 147
         },
         __self: this
       }, "\u0E41\u0E01\u0E49\u0E44\u0E02\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement("form", {
         onSubmit: _this.submitEditForm,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 91
+          lineNumber: 148
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContent__WEBPACK_IMPORTED_MODULE_23___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 92
+          lineNumber: 149
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContentText__WEBPACK_IMPORTED_MODULE_24___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 93
+          lineNumber: 150
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(InputForm, {
@@ -549,13 +706,13 @@ function (_Component) {
         onChange: _this.handleText,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 94
+          lineNumber: 151
         },
         __self: this
       }))), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogActions__WEBPACK_IMPORTED_MODULE_22___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 100
+          lineNumber: 157
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
@@ -563,7 +720,7 @@ function (_Component) {
         color: "secondary",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 101
+          lineNumber: 158
         },
         __self: this
       }, "\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
@@ -571,55 +728,55 @@ function (_Component) {
         color: "inherit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 104
+          lineNumber: 161
         },
         __self: this
       }, "\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01"))));
     });
 
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "dialogDelete", function () {
-      var _this$state4 = _this.state,
-          openDelete = _this$state4.openDelete,
-          channelName = _this$state4.channelName;
+      var _this$state5 = _this.state,
+          openDelete = _this$state5.openDelete,
+          channelName = _this$state5.channelName;
       return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Dialog__WEBPACK_IMPORTED_MODULE_21___default.a, {
         open: openDelete,
         onClose: _this.handleClose,
         "aria-labelledby": "form-dialog-edit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 115
+          lineNumber: 172
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogTitle__WEBPACK_IMPORTED_MODULE_25___default.a, {
         id: "form-dialog-edit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 120
+          lineNumber: 177
         },
         __self: this
       }, "\u0E25\u0E1A\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25 ", channelName), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement("form", {
-        onSubmit: _this.submitEditForm,
+        onSubmit: _this.submitDeleteForm,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 121
+          lineNumber: 178
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContent__WEBPACK_IMPORTED_MODULE_23___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 122
+          lineNumber: 179
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContentText__WEBPACK_IMPORTED_MODULE_24___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 123
+          lineNumber: 180
         },
         __self: this
       }, "\u0E22\u0E37\u0E19\u0E22\u0E31\u0E19\u0E01\u0E32\u0E23\u0E25\u0E1A\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25 ", channelName)), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogActions__WEBPACK_IMPORTED_MODULE_22___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 127
+          lineNumber: 184
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
@@ -627,7 +784,7 @@ function (_Component) {
         color: "secondary",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 128
+          lineNumber: 185
         },
         __self: this
       }, "\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
@@ -635,7 +792,79 @@ function (_Component) {
         color: "inherit",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 131
+          lineNumber: 188
+        },
+        __self: this
+      }, "\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01"))));
+    });
+
+    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_8__["default"])(_this), "dialogOpenVote", function () {
+      var _this$state6 = _this.state,
+          openVote = _this$state6.openVote,
+          channelName = _this$state6.channelName;
+      return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Dialog__WEBPACK_IMPORTED_MODULE_21___default.a, {
+        open: openVote,
+        onClose: _this.handleClose,
+        "aria-labelledby": "form-dialog-edit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 199
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogTitle__WEBPACK_IMPORTED_MODULE_25___default.a, {
+        id: "form-dialog-edit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 204
+        },
+        __self: this
+      }, "\u0E40\u0E1B\u0E34\u0E14\u0E42\u0E2B\u0E27\u0E15 ", channelName), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement("form", {
+        onSubmit: _this.submitOpenForm,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 205
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContent__WEBPACK_IMPORTED_MODULE_23___default.a, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 206
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogContentText__WEBPACK_IMPORTED_MODULE_24___default.a, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 207
+        },
+        __self: this
+      }, "\u0E43\u0E2A\u0E48\u0E40\u0E27\u0E25\u0E32\u0E1B\u0E34\u0E14\u0E42\u0E2B\u0E27\u0E15", react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(InputForm, {
+        defaultValue: '',
+        onChange: _this.handleTime,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 209
+        },
+        __self: this
+      }))), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_DialogActions__WEBPACK_IMPORTED_MODULE_22___default.a, {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 215
+        },
+        __self: this
+      }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
+        onClick: _this.handleClose,
+        color: "secondary",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 216
+        },
+        __self: this
+      }, "\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Button__WEBPACK_IMPORTED_MODULE_26___default.a, {
+        type: "submit",
+        color: "inherit",
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 219
         },
         __self: this
       }, "\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01"))));
@@ -648,7 +877,7 @@ function (_Component) {
           key: "rows" + i,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 145
+            lineNumber: 233
           },
           __self: this
         }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17___default.a, {
@@ -661,30 +890,30 @@ function (_Component) {
           },
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 146
+            lineNumber: 234
           },
           __self: this
         }, e.name), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17___default.a, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 153
+            lineNumber: 241
           },
           __self: this
         }, e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17___default.a, {
           align: "center",
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 154
+            lineNumber: 242
           },
           __self: this
         }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(ActionButton, {
           onClick: function onClick() {
-            return console.log("No");
+            return _this.openDialogOpenVote(e.id, e.name);
           },
           src: "../static/image/voting.png",
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 155
+            lineNumber: 243
           },
           __self: this
         }), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(ActionButton, {
@@ -694,7 +923,7 @@ function (_Component) {
           src: "../static/image/pencil-edit-button.png",
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 159
+            lineNumber: 247
           },
           __self: this
         }), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(ActionButton, {
@@ -704,7 +933,7 @@ function (_Component) {
           src: "../static/image/delete.png",
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 163
+            lineNumber: 251
           },
           __self: this
         })));
@@ -718,7 +947,10 @@ function (_Component) {
       rowsPerPage: 5,
       openEdit: false,
       openDelete: false,
-      channelId: ""
+      openVote: false,
+      openAddnew: false,
+      channelId: "",
+      timeCount: ""
     };
     return _this;
   }
@@ -728,19 +960,19 @@ function (_Component) {
     value: function () {
       var _componentDidMount = Object(_babel_runtime_corejs2_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__["default"])(
       /*#__PURE__*/
-      _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
-        return _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+      _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
+        return _babel_runtime_corejs2_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 this.getChannel();
 
               case 1:
               case "end":
-                return _context3.stop();
+                return _context5.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee5, this);
       }));
 
       function componentDidMount() {
@@ -752,29 +984,31 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this$state5 = this.state,
-          dataChannel = _this$state5.dataChannel,
-          page = _this$state5.page,
-          rowsPerPage = _this$state5.rowsPerPage;
+      var _this2 = this;
+
+      var _this$state7 = this.state,
+          dataChannel = _this$state7.dataChannel,
+          page = _this$state7.page,
+          rowsPerPage = _this$state7.rowsPerPage;
       return react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(Container, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 176
+          lineNumber: 264
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(HeaderChannel, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 177
+          lineNumber: 265
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(AddNewChanelButton, {
         onClick: function onClick() {
-          return console.log("AddNewVoteNow");
+          return _this2.openDialogAddnew();
         },
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 178
+          lineNumber: 266
         },
         __self: this
       }, "AddNewChanel")), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_Table__WEBPACK_IMPORTED_MODULE_15___default.a, {
@@ -783,46 +1017,46 @@ function (_Component) {
         },
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 182
+          lineNumber: 270
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableHead__WEBPACK_IMPORTED_MODULE_18___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 183
+          lineNumber: 271
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableRow__WEBPACK_IMPORTED_MODULE_19___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 184
+          lineNumber: 272
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17___default.a, {
         align: "left",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 185
+          lineNumber: 273
         },
         __self: this
       }, "ChannelName"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17___default.a, {
         align: "left",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 186
+          lineNumber: 274
         },
         __self: this
       }, "StatusVote"), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_17___default.a, {
         align: "center",
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 187
+          lineNumber: 275
         },
         __self: this
       }, "action"))), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TableBody__WEBPACK_IMPORTED_MODULE_16___default.a, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 190
+          lineNumber: 278
         },
         __self: this
       }, this.renderItem())), react__WEBPACK_IMPORTED_MODULE_11___default.a.createElement(_material_ui_core_TablePagination__WEBPACK_IMPORTED_MODULE_20___default.a, {
@@ -841,10 +1075,10 @@ function (_Component) {
         onChangeRowsPerPage: this.handleChangeRowsPerPage,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 192
+          lineNumber: 280
         },
         __self: this
-      }), this.dialogShow(), this.dialogDelete());
+      }), this.dialogAddnew(), this.dialogShow(), this.dialogDelete(), this.dialogOpenVote());
     }
   }]);
 
@@ -1910,7 +2144,7 @@ function (_Component) {
 
 /***/ }),
 
-/***/ 3:
+/***/ 7:
 /*!*********************************!*\
   !*** multi ./pages/votelist.js ***!
   \*********************************/
