@@ -23,7 +23,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 
 
+
 export class VoteList extends Component {
+  getInitialProps = async () => {
+    await fetch(`${window.location.host}/api/votelist`);
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -40,6 +44,7 @@ export class VoteList extends Component {
   }
   async componentDidMount() {
     this.getChannel();
+    
   }
 
   getChannel = (setProps = {}) => {
@@ -89,7 +94,9 @@ export class VoteList extends Component {
       timeCount: setTime.toString(),
       isVote: true
     })
-
+    axios.post(`http://${window.location.host}/api/votelist`, {
+      timeCount: setTime.toString()
+    });
     this.getChannel({openVote: false})
   }
   submitForm = async e => {
