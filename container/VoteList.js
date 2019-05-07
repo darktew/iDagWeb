@@ -85,13 +85,10 @@ export class VoteList extends Component {
     e.preventDefault();
     const { timeCount,channelId } = this.state
     const setTime = moment().hour(10).add(timeCount, 'minute');
-    // await database.ref(`channel/${channelId}`).update({
-    //   timeCount: setTime.toString(),
-    //   isVote: true
-    // })
-   
-
-    console.log(parent);
+    await database.ref(`channel/${channelId}`).update({
+      timeCount: setTime.toString(),
+      isVote: true
+    })
 
     this.getChannel({openVote: false})
   }
@@ -238,7 +235,7 @@ export class VoteList extends Component {
     return (
       <Container>
         <HeaderChannel>
-          asdasd
+          <button>เพิ่มข้อมูล</button>
         </HeaderChannel>
         <Table style={{ minWidth: 700 }}>
           <TableHead>
