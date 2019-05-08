@@ -10,6 +10,14 @@
     "/_error": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
+    ],
+    "/channelDetail": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
+    "/menuList": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
     ]
   }
 }
