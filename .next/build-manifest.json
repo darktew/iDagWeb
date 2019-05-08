@@ -11,6 +11,10 @@
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
+    "/channelDetail": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
     "/votelist": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"

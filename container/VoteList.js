@@ -44,7 +44,6 @@ export class VoteList extends Component {
   }
   async componentDidMount() {
     this.getChannel();
-    
   }
 
   getChannel = (setProps = {}) => {
@@ -89,13 +88,14 @@ export class VoteList extends Component {
   submitFormVote = async e => {
     e.preventDefault();
     const { timeCount,channelId } = this.state
-    const setTime = moment().hour(10).add(timeCount, 'minute');
+    const setTime = moment().add(timeCount, 'minute');
     await database.ref(`channel/${channelId}`).update({
       timeCount: setTime.toString(),
       isVote: true
     })
     axios.post(`http://${window.location.host}/api/votelist`, {
-      timeCount: setTime.toString()
+      timeCount: setTime.toString(),
+      channelId: channelId
     });
     this.getChannel({openVote: false})
   }
@@ -125,7 +125,7 @@ export class VoteList extends Component {
         onClose={this.handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">แก้ไขข้อมูล</DialogTitle>
+        <DialogTitle id="form-dialog-title">{channelName ? "แก้ไขข้อมูล" : "เพิ่มข้อมู,"}</DialogTitle>
         <form onSubmit={this.submitForm}>
           <DialogContent>
             <DialogContentText>
@@ -190,14 +190,11 @@ export class VoteList extends Component {
     const { dataChannel, anchorEl } = this.state;
     return dataChannel.map((e, i) => {
       return (
-        <TableRow key={"rows" + i}>
-          <TableCell
-            align="left"
-            onClick={e.isVote ? () => this.nextPage(e._id,e.detail): () => console.log('not open Vote')}
-            style={{ cursor: "pointer" }}
-          >
-            {e.name}
-          </TableCell>
+        <TableRow key={"rows" + i} >
+          <TableCell 
+          align="left"
+          onClick={() => this.nextPage(e._id,e.detail)} style={{ cursor: "pointer" }}
+          >{e.name}</TableCell>
           <TableCell>{e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"}</TableCell>
           <TableCell align="center">
             <IconButton 
