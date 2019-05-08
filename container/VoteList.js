@@ -182,10 +182,11 @@ export class VoteList extends Component {
         onClose={this.handleCloseAddNew}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">เพิ่มข้อมูลโหวต</DialogTitle>
+        <DialogTitle id="form-dialog-title" >เพิ่มข้อมูลโหวต</DialogTitle>
         <form onSubmit={this.submitAddnew}>
           <DialogContent>
             <DialogContentText>
+              ชื่อการโหวต : 
               <InputForm
                 defaultValue={''}
                 onChange={this.handleAddnew}
@@ -212,7 +213,7 @@ export class VoteList extends Component {
         onClose={this.handleCloseDelete}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">ลบข้อมูล {channelName}</DialogTitle>
+        <DialogTitle id="form-dialog-title" >ลบข้อมูล {channelName}</DialogTitle>
         <form onSubmit={this.submitDelete}>
           <DialogContent>
             <DialogContentText>
@@ -326,7 +327,7 @@ export class VoteList extends Component {
     return (
       <Container>
         <HeaderChannel>
-          <button onClick={this.openDialogAddnew}>เพิ่มข้อมูล</button>
+          <button className ="Addnew" onClick={this.openDialogAddnew}>เพิ่มข้อมูลการโหวต</button>
         </HeaderChannel>
         <Table style={{ minWidth: 700 }}>
           <TableHead>
@@ -378,8 +379,10 @@ const ActionButton = styled.img`
 `;
 
 const InputForm = styled.input`
-  padding: 0.5vw;
+  padding: 1vw;
   font-size: 1vw;
+  border-radius:5px;
+  margin:1vw;
 `;
 
 const HeaderChannel = styled.div`
@@ -387,6 +390,13 @@ const HeaderChannel = styled.div`
   align-items: center;
   justify-content: flex-end;
   padding: 0.5vw 5vw 0 0;
+  > button.Addnew {
+    color:white;
+    background-color: #F41B00;
+    width:10vw;
+    font-size:1.5vw;
+    border-radius:5px;
+  }
 `
 
 const FormVote = styled.div`
@@ -396,9 +406,8 @@ const FormVote = styled.div`
 
 const InputVote = styled.input`
   font-size: 1.2vw;
-  padding: 0.5vw;
+  padding: 1vw;
   margin: 1vw;
   height: 3vw;
   width: 3vw;
 `
-

@@ -118,7 +118,6 @@ export class ChannelDetail extends Component {
     e.preventDefault();
     const { router } = this.props;
     const { detailChannel,nameTitle,type } = this.state;
-    const result = database.ref(`channel/${router.query._id}`);
     await database.ref(`channel/${router.query._id}/detail/${detailChannel.length}`).update({
       nameTitle: nameTitle,
       imageRes: "",
@@ -362,7 +361,9 @@ setCurrentVote = (index, type) => {
   render() {
     return (
       <Container>
-         <button onClick={this.openDialogAddnew}>เพิ่มข้อมูล</button>
+        <HeaderChannel>
+        <button className ="Addnew" onClick={this.openDialogAddnew}>เพิ่มร้านอาหาร</button>
+        </HeaderChannel>
         <Table style={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
@@ -390,10 +391,40 @@ export default withRouter(ChannelDetail);
 const Container = styled.div``;
 
 const ActionButton = styled.img`
-    width: 2vw;
-    height: 2vw;
-`
+  cursor: pointer;
+  width: 1.5vw;
+  height: 1.5vw;
+  margin: 0 0.5vw;
+`;
+
 const InputForm = styled.input`
   padding: 0.5vw;
   font-size: 1vw;
 `;
+
+const HeaderChannel = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5vw 5vw 0 0;
+  > button.Addnew {
+    color:white;
+    background-color: #F41B00;
+    width:10vw;
+    font-size:1.5vw;
+    border-radius:5px;
+  }
+`
+
+const FormVote = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const InputVote = styled.input`
+  font-size: 1.2vw;
+  padding: 0.5vw;
+  margin: 1vw;
+  height: 3vw;
+  width: 3vw;
+`
