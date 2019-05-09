@@ -47,7 +47,7 @@ export class OrderList extends Component {
     database
       .ref(`winner`)
       .orderByChild(`date`)
-      .equalTo(`Thu Apr 25 2019 11:30:00 GMT+0700 (+07)`)
+      .startAt(`${new Date().getMonth()} ${new Date().getDay()}`)
       .on("value", async snapshot => {
         const data = snapshot.val();
 
@@ -77,10 +77,11 @@ export class OrderList extends Component {
   };
   getOrderList = (userOrder, userDetail) => {
     return new Promise((resolve, reject) => {
+      const orderUser = Object.values(userOrder[0].userOrder);
       const data = userDetail.map((e, i) => {
         const usingData =
-          userOrder[0].userOrder &&
-          userOrder[0].userOrder.reduce(
+          orderUser &&
+          orderUser.reduce(
             (prev, current, index) => {
               if (e._id === current.uid) {
                 console.log(index);
@@ -143,7 +144,7 @@ export class OrderList extends Component {
       nameMenu,
       total
     });
-    database.ref(`winner/${winnerId}/userOrder/${indexItem}`).update({
+    database.ref(`winner/${winnerId}/userOrder/${uid}`).update({
       order,
       uid
     });
@@ -182,31 +183,43 @@ export class OrderList extends Component {
           <TableRow key={"rows" + i}>
             <TableCell key={"fullname" + i}>{e.fullname}</TableCell>
             {e.order ? (
-              e.order.map((eOrder, i) => (
+              // e.order.map((eOrder, i) => (
                 <>
                   <TableCell key={"itemEdit 1" + i}>
-                    {e.isEdit ? (
-                      <InputForm
-                        onChange={this.handleChangeText}
-                        defaultValue={eOrder.nameMenu}
-                      />
-                    ) : (
-                      eOrder.nameMenu
-                    )}
+                    {e.order.map((eOrder, i) => (
+                        e.isEdit ? (
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <InputForm
+                              onChange={this.handleChangeText}
+                              defaultValue={eOrder.nameMenu}
+                            />
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <p>{eOrder.nameMenu}</p>
+                          </div>
+                        ))
+                      )
+                    }
                   </TableCell>
-                  <TableCell key={"itemEdit 2" + i}>
-                    {e.isEdit ? (
-                      <InputForm
-                        onChange={this.handleChangeTotal}
-                        defaultValue={eOrder.total}
-                        type="number"
-                      />
-                    ) : (
-                      eOrder.total
-                    )}
+                  <TableCell>
+                    {e.order.map((eOrder, i) => (
+                          e.isEdit ? (
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                              <InputForm
+                                onChange={this.handleChangeText}
+                                defaultValue={eOrder.total}
+                              />
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                              <p>{eOrder.total} กล่อง</p>
+                            </div>
+                          ))
+                        )
+                      }
                   </TableCell>
                 </>
-              ))
             ) : (
               <>
                 <TableCell key={"itemEdit 3" + i}>
