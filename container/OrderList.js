@@ -1,42 +1,42 @@
-import React, { Component } from 'react';
-import database from '../firebase/database';
-import styled from 'styled-components';
+import React, { Component } from "react";
+import database from "../firebase/database";
+import styled from "styled-components";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TablePagination from "@material-ui/core/TablePagination";
-import MoreIcon from '@material-ui/icons/MoreVert';
+import MoreIcon from "@material-ui/icons/MoreVert";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
-import Router from 'next/router';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-
+import Router from "next/router";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@material-ui/core/IconButton";
 
 export class OrderList extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       orderList: [],
       page: 0,
       rowsPerPage: 5,
-      winnerTitle: '',
+      winnerTitle: "",
       anchorEl: null,
-      orderId: '',
-      isEdit: false,
-      nameMenu: '',
+      orderId: "",
+      nameMenu: "",
       total: 0,
-      uid: '',
-      winnerId: '',
-      openAction: []
-    }
+      uid: "",
+      winnerId: "",
+      openAction: [],
+      editOpen: [],
+      indexItem: null
+    };
   }
 
   async componentDidMount() {
@@ -44,78 +44,114 @@ export class OrderList extends Component {
   }
 
   getWinner = () => {
-    database.ref(`winner`).orderByChild(`date`).equalTo(`Thu Apr 25 2019 11:30:00 GMT+0700 (+07)`).on('value', async(snapshot) => {
-      const data = snapshot.val();
+    database
+      .ref(`winner`)
+      .orderByChild(`date`)
+      .equalTo(`Thu Apr 25 2019 11:30:00 GMT+0700 (+07)`)
+      .on("value", async snapshot => {
+        const data = snapshot.val();
 
-      const keys = Object.keys(snapshot.val());
-      const winnerData = keys.map(key => ({_id: key, ...data[key]}))
-      const userData = await this.getUser();
+        const keys = Object.keys(snapshot.val());
+        const winnerData = keys.map(key => ({ _id: key, ...data[key] }));
+        const userData = await this.getUser();
 
-      const orderList = await this.getOrderList(winnerData,userData);
-      let openAction = [];
-      if(orderList) {
-        orderList.map((e,i) => openAction.push(false))
-      }
-      !this.unset && this.setState({ orderList, winnerTitle: Object.values(data)[0].winnerName, winnerId: Object.keys(data)[0], openAction});
-    })
-  }
+        const orderList = await this.getOrderList(winnerData, userData);
+        console.log(orderList);
+        let openAction = [];
+        let editOpen = [];
+        if (orderList) {
+          orderList.map((e, i) => {
+            openAction.push(false);
+            editOpen.push(false);
+          });
+        }
+        !this.unset &&
+          this.setState({
+            orderList,
+            winnerTitle: Object.values(data)[0].winnerName,
+            winnerId: Object.keys(data)[0],
+            openAction,
+            editOpen
+          });
+      });
+  };
   getOrderList = (userOrder, userDetail) => {
-    return new Promise((resolve,reject ) => {
-     const data = userDetail.map((e,i) => {
-      const usingData = userOrder[0].userOrder.reduce((prev, current, index) => {
-         if(e._id === current.uid) {
-          prev.data.uid = e._id;
-          prev.data.order = current.order;
-          prev.data.fullname = e.fullname;
-          prev.data._id = userOrder[0]._id;
-          return prev.data;
-         } else {
-           prev.data.uid = e._id;
-           prev.data.fullname = e.fullname;
-           prev.data._id = userOrder[0]._id
-           return prev.data;
-         }
-       }, { data: {} })
-       return usingData
-      })
-      resolve(data)
-    })
-  }
+    return new Promise((resolve, reject) => {
+      const data = userDetail.map((e, i) => {
+        const usingData =
+          userOrder[0].userOrder &&
+          userOrder[0].userOrder.reduce(
+            (prev, current, index) => {
+              if (e._id === current.uid) {
+                console.log(index);
+                prev.data.uid = e._id;
+                prev.data.fullname = e.fullname;
+                prev.data.order = current.order;
+                prev.data._id = userOrder[0]._id;
+                prev.data.isEdit = false;
+              } else {
+                prev.data.uid = e._id;
+                prev.data.fullname = e.fullname;
+                prev.data._id = userOrder[0]._id;
+                prev.data.isEdit = false;
+              }
+              return prev;
+            },
+            { data: {} }
+          );
+        return usingData.data;
+      });
+      console.log("data", data);
+      resolve(data);
+    });
+  };
 
-  editOpen = () => {
-    this.setState({ isEdit: true, anchorEl: null })
+  editOpen = (index, itemEdit) => {
+    const { openAction, orderList } = this.state;
+    openAction[index] = false;
+    itemEdit.isEdit = true;
+    orderList[index] = itemEdit;
+    this.setState({ isEdit: true, anchorEl: null, openAction, orderList });
+  };
+  closeEdit = (index) => {
+    const { orderList } = this.state;
+    orderList[index].isEdit = false;
+    this.setState({ orderList });
   }
-  handleChangeText = (event) => {
-    this.setState({ nameMenu: event.target.value })
-  }
-  handleChangeTotal = (event) => {
-    this.setState({ total: event.target.value })
-  }
-  handleClickMenus = (event,orderId,uid,index) => {
+  handleChangeText = event => {
+    this.setState({ nameMenu: event.target.value });
+  };
+  handleChangeTotal = event => {
+    this.setState({ total: parseInt(event.target.value) });
+  };
+  handleClickMenus = (event, orderId, uid, index) => {
     const { openAction } = this.state;
     openAction[index] = !openAction[index];
-    this.setState({ anchorEl: event.currentTarget, orderId,uid, openAction});
+    this.setState({
+      anchorEl: event.currentTarget,
+      orderId,
+      uid,
+      openAction,
+      indexItem: index
+    });
   };
-  submitForm = (e) => {
+  submitForm = e => {
     e.preventDefault();
-    const { nameMenu, total,winnerId,uid } = this.state;
-
-    database.ref(`winner/${winnerId}/userOrder`).orderByChild(`uid`).equalTo(uid).on('value', (snapshot) => {
-        snapshot.forEach((chlid) => {
-          const order = [];
-          order.push({
-            nameMenu: nameMenu,
-            total: total
-          })
-          chlid.ref.update({
-            order: order
-          });
-        })
-    })
-
-    this.setState({ isEdit: false })
-  } 
-  handleCloseMenus = (index) => {
+    const { nameMenu, total, winnerId, uid, indexItem, orderList } = this.state;
+    let order = [];
+    order.push({
+      nameMenu,
+      total
+    });
+    database.ref(`winner/${winnerId}/userOrder/${indexItem}`).update({
+      order,
+      uid
+    });
+    orderList[indexItem].isEdit = false;
+    this.getWinner();
+    this.setState({ orderList });
+  };
+  handleCloseMenus = index => {
     const { openAction } = this.state;
     openAction[index] = false;
     this.setState({ anchorEl: null, openAction });
@@ -127,61 +163,97 @@ export class OrderList extends Component {
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
   };
-  getUser = () => { 
-    return new Promise((resolve,reject) => {
-      database.ref(`user`).on('value',(snapshot) => {
+  getUser = () => {
+    return new Promise((resolve, reject) => {
+      database.ref(`user`).on("value", snapshot => {
         const data = snapshot.val();
         const keys = Object.keys(snapshot.val());
-        const userData = keys.map(key => ({_id: key, ...data[key]}))
+        const userData = keys.map(key => ({ _id: key, ...data[key] }));
         resolve(userData);
-      })
-    })
-  }
+      });
+    });
+  };
   renderItem = () => {
-    const { orderList,anchorEl, isEdit, total, nameMenu, openAction } = this.state;
-    return orderList.map((e,i) => {
-      return (
-        <TableRow key={"rows" + i}>
-          <TableCell>{e.fullname}</TableCell>
-          {e.order  &&
-            e.order.map((e,i) => (
-          <>
-            <TableCell>
-              { isEdit ? 
-                <InputForm onChange={ this.handleChangeText } defaultValue={nameMenu} />
-                : 
-                e.nameMenu}
-            </TableCell>
-            <TableCell>
-              {
-                isEdit ? 
-                <InputForm onChange={ this.handleChangeText } defaultValue={total} />
-                :
-                e.total
-              }
-            </TableCell>
-          </>
-          ))}
-          <TableCell align="center">
-          { isEdit ?
-            <IconButton
-              key={"editIcon" + i}
-              type="submit"
-            >
-              <ActionButton
-                    src="../static/image/pencil-edit-button.png"
-              />
-            </IconButton>
-            :
-            <IconButton 
-                key={"MoreIcon" + i}
-                aria-owns={anchorEl ? 'simple-menu' : 'defaults'}
-                aria-haspopup="true"
-                onClick={(event) => this.handleClickMenus(event,e._id,e.uid,i)}
+    const { orderList, anchorEl, total, nameMenu, openAction } = this.state;
+    return (
+      orderList &&
+      orderList.map((e, i) => {
+        return (
+          <TableRow key={"rows" + i}>
+            <TableCell key={"fullname" + i}>{e.fullname}</TableCell>
+            {e.order ? (
+              e.order.map((eOrder, i) => (
+                <>
+                  <TableCell key={"itemEdit 1" + i}>
+                    {e.isEdit ? (
+                      <InputForm
+                        onChange={this.handleChangeText}
+                        defaultValue={eOrder.nameMenu}
+                      />
+                    ) : (
+                      eOrder.nameMenu
+                    )}
+                  </TableCell>
+                  <TableCell key={"itemEdit 2" + i}>
+                    {e.isEdit ? (
+                      <InputForm
+                        onChange={this.handleChangeTotal}
+                        defaultValue={eOrder.total}
+                        type="number"
+                      />
+                    ) : (
+                      eOrder.total
+                    )}
+                  </TableCell>
+                </>
+              ))
+            ) : (
+              <>
+                <TableCell key={"itemEdit 3" + i}>
+                  {e.isEdit ? (
+                    <InputForm
+                      onChange={this.handleChangeText}
+                      defaultValue={''}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+                <TableCell key={"itemEdit 4" + i}>
+                  {e.isEdit ? (
+                    <InputForm
+                      onChange={this.handleChangeTotal}
+                      defaultValue={0}
+                      type="number"
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+              </>
+            )}
+            <TableCell align="center" key={"icons" + i}>
+              {e.isEdit ? (
+              <>
+                <IconButton key={"editIcon" + i} type="submit">
+                  <ActionButton src="../static/image/confirm.png" />
+                </IconButton>
+                <IconButton key={"deleteIcon" + i} onClick={() => this.closeEdit(i)}>
+                  <ActionButton src="../static/image/cancel.png" />
+                </IconButton>
+              </> 
+              ) : (
+                <IconButton
+                  key={"MoreIcon" + i}
+                  aria-owns={anchorEl ? "simple-menu" : "defaults"}
+                  aria-haspopup="true"
+                  onClick={event =>
+                    this.handleClickMenus(event, e._id, e.uid, i)
+                  }
                 >
-                <MoreIcon />
-              </IconButton>
-          }
+                  <MoreIcon />
+                </IconButton>
+              )}
               <Menu
                 key={"Menu Items" + i}
                 id="simple-menu"
@@ -189,71 +261,69 @@ export class OrderList extends Component {
                 open={openAction[i]}
                 onClose={() => this.handleCloseMenus(i)}
               >
-                <MenuItem onClick={this.editOpen} key={`menuButton ${i}`}>
-                  <ActionButton
-                    src="../static/image/pencil-edit-button.png"
-                  />
+                <MenuItem
+                  onClick={() => this.editOpen(i, e)}
+                  key={`menuButton ${i}`}
+                >
+                  <ActionButton src="../static/image/pencil-edit-button.png" />
                 </MenuItem>
                 <MenuItem onClick={this.deleteOpen}>
-                  <ActionButton
-                    src="../static/image/delete.png"
-                  />
+                  <ActionButton src="../static/image/delete.png" />
                 </MenuItem>
               </Menu>
-          </TableCell>
-        </TableRow>
-      )
-    })
-  }
+            </TableCell>
+          </TableRow>
+        );
+      })
+    );
+  };
   componentWillUnmount() {
     this.unset = true;
   }
   render() {
-    const { orderList, page, rowsPerPage, open,winnerTitle } = this.state;
+    const { orderList, page, rowsPerPage, winnerTitle } = this.state;
     return (
       <Container>
-      <HeaderChannel>
-        <h1>รายการอาหาร</h1>
-        <h2>{winnerTitle}</h2>
-      </HeaderChannel>
-      <FormVote onSubmit={this.submitForm}>
-      <Table style={{ minWidth: 700 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell align="left">username</TableCell>
-            <TableCell align="left">menu</TableCell>
-            <TableCell align="left">total</TableCell>
-            <TableCell align="center">action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{this.renderItem()}</TableBody>
-      </Table>
-      </FormVote>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={orderList.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        backIconButtonProps={{
-          "aria-label": "Previous Page"
-        }}
-        nextIconButtonProps={{
-          "aria-label": "Next Page"
-        }}
-        onChangePage={this.handleChangePage}
-        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-      />
-    </Container>
-    )
+        <HeaderChannel>
+          <h1>รายการอาหาร</h1>
+          <h2>{winnerTitle}</h2>
+        </HeaderChannel>
+        <FormVote onSubmit={this.submitForm}>
+          <Table style={{ minWidth: 700 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">username</TableCell>
+                <TableCell align="left">menu</TableCell>
+                <TableCell align="left">amount</TableCell>
+                <TableCell align="center">action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{this.renderItem()}</TableBody>
+          </Table>
+        </FormVote>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={orderList.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          backIconButtonProps={{
+            "aria-label": "Previous Page"
+          }}
+          nextIconButtonProps={{
+            "aria-label": "Next Page"
+          }}
+          onChangePage={this.handleChangePage}
+          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        />
+      </Container>
+    );
   }
 }
 
-export default OrderList
-
+export default OrderList;
 
 ////////////////////////////////
-
 
 const Container = styled.div``;
 
@@ -267,31 +337,32 @@ const ActionButton = styled.img`
 const InputForm = styled.input`
   padding: 1vw;
   font-size: 1vw;
-  border-radius:5px;
-  margin:1vw;
+  border-radius: 5px;
+  margin: 1vw;
 `;
 
 const HeaderChannel = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction:column;
+  flex-direction: column;
   padding: 0.5vw 5vw 0 0;
   > h1 {
     margin: 0;
   }
   > button.Addnew {
-    color:white;
-    background-color: #F41B00;
-    width:10vw;
-    font-size:1.5vw;
-    border-radius:5px;
+    color: white;
+    background-color: #f41b00;
+    width: 10vw;
+    font-size: 1.5vw;
+    border-radius: 5px;
   }
-`
+`;
 
 const FormVote = styled.form`
-  width:100%;
-`
+  width: 100%;
+`;
+const FormInput = styled.div``;
 
 const InputVote = styled.input`
   font-size: 1.2vw;
@@ -299,6 +370,4 @@ const InputVote = styled.input`
   margin: 1vw;
   height: 3vw;
   width: 3vw;
-`
-
-
+`;
