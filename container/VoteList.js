@@ -95,7 +95,6 @@ export class VoteList extends Component {
   }
   handleClickMenus = (event,channelId,channelName) => {
     this.setState({ anchorEl: event.currentTarget, channelId, channelName});
-    console.log("Statset",channelId,channelName)
   };
   handleCloseMenus = () => {
     this.setState({ anchorEl: null });
@@ -282,13 +281,6 @@ export class VoteList extends Component {
     const { dataChannel, anchorEl } = this.state;
     return dataChannel.map((e, i) => {
       return (
-<<<<<<< HEAD
-        <TableRow key={"rows" + i} >
-          <TableCell 
-          align="left"
-          onClick={() => this.nextPage(e._id,e.detail)} style={{ cursor: "pointer" }}
-          >{e.name}</TableCell>
-=======
         <TableRow key={"rows" + i}>
           <TableCell
             align="left"
@@ -297,7 +289,6 @@ export class VoteList extends Component {
           >
             {e.name}
           </TableCell>
->>>>>>> pick
           <TableCell>{e.isVote ? "เปิดโหวตแล้ว" : "ยังไม่เปิดโหวต"}</TableCell>
           <TableCell align="center">
             <IconButton 

@@ -48,7 +48,7 @@ export class MenuList extends Component {
         const result = database.ref(`channel/${channelId}/detail/${detailId}`);
         result.on("value", snapshot => {
           const data = snapshot.val();
-          this.setState({ detailMenu: data.menuRes, channelId, detailId , ...open });
+         !this.unset && this.setState({ detailMenu: data.menuRes, channelId, detailId , ...open });
 
         });
       };
@@ -102,6 +102,9 @@ export class MenuList extends Component {
         });
         this.getDetail({openEdit: false})
       };
+      componentWillUnmount() {
+        this.unset = true;
+      }
       submitDelete = async e => {
         e.preventDefault();
         const { router } = this.props;
@@ -213,7 +216,7 @@ export class MenuList extends Component {
               <TableCell>{e.menuName}</TableCell>
               <TableCell align="left">{e.price}</TableCell>
               <TableCell align="center">
-                <IconButton 
+              <IconButton 
                   key={"MoreIcon" + i}
                   aria-owns={anchorEl ? 'simple-menu' : 'defaults'}
                   aria-haspopup="true"

@@ -11,11 +11,7 @@
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
-<<<<<<< HEAD
-    "/channelDetail": [
-=======
-    "/menuList": [
->>>>>>> pick
+    "/orderlist": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],

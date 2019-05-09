@@ -51,19 +51,19 @@ export class ChannelDetail extends Component {
         if(currentVote) {
           data.detail[currentVote - 1].isVote = true;
         }
-        this.setState({ detailChannel: data.friDayDetail, ...open });
+        !this.unset &&  this.setState({ detailChannel: data.friDayDetail, ...open });
       } else {
         if(currentVote) {
           data.detail[currentVote - 1].isVote = true;
         }
-        this.setState({ detailChannel: data.detail, ...open });
+        !this.unset && this.setState({ detailChannel: data.detail, ...open });
       }
     });
   };
   getCurrentVote = (uid) => {
     database.ref(`user/${uid}`).on('value', (snapshot) => {
         const currentUser = snapshot.val();
-        this.setState({ currentVote: currentUser.currentVote, uid });
+        !this.unset && this.setState({ currentVote: currentUser.currentVote, uid });
     })
   };
  
@@ -245,6 +245,11 @@ setCurrentVote = (index, type) => {
       </Dialog>
     );
   };
+
+
+  componentWillUnmount() {
+    this.unset = true;
+  }
 
   dialogEdit = () => {
     const { openEdit, nameTitle,type, detailId } = this.state;
