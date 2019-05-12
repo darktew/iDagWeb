@@ -50,7 +50,6 @@ export class OrderList extends Component {
       .startAt(`${new Date().getMonth()} ${new Date().getDay()}`)
       .on("value", async snapshot => {
         const data = snapshot.val();
-
         const keys = Object.keys(snapshot.val());
         const winnerData = keys.map(key => ({ _id: key, ...data[key] }));
         const userData = await this.getUser();
@@ -77,14 +76,15 @@ export class OrderList extends Component {
   };
   getOrderList = (userOrder, userDetail) => {
     return new Promise((resolve, reject) => {
-      const orderUser = Object.values(userOrder[0].userOrder);
+      const dataUserOrder = Object.values(userOrder[0].userOrder);
+      const keys = Object.keys(userOrder[0].userOrder);
+      const orderUser = keys.map(key => ({ uid: key, ...userOrder[0].userOrder[key] }));
       const data = userDetail.map((e, i) => {
         const usingData =
           orderUser &&
           orderUser.reduce(
             (prev, current, index) => {
               if (e._id === current.uid) {
-                console.log(index);
                 prev.data.uid = e._id;
                 prev.data.fullname = e.fullname;
                 prev.data.order = current.order;
@@ -102,7 +102,6 @@ export class OrderList extends Component {
           );
         return usingData.data;
       });
-      console.log("data", data);
       resolve(data);
     });
   };
@@ -185,34 +184,34 @@ export class OrderList extends Component {
             {e.order ? (
               // e.order.map((eOrder, i) => (
                 <>
-                  <TableCell key={"itemEdit 1" + i}>
-                    {e.order.map((eOrder, i) => (
+                  <TableCell key={"itemName" + i}>
+                    {Object.values(e.order).map((eOrder, i) => (
                         e.isEdit ? (
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromName ${i}`}>
                             <InputForm
                               onChange={this.handleChangeText}
                               defaultValue={eOrder.nameMenu}
                             />
                           </div>
                         ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromName ${i}`}>
                             <p>{eOrder.nameMenu}</p>
                           </div>
                         ))
                       )
                     }
                   </TableCell>
-                  <TableCell>
-                    {e.order.map((eOrder, i) => (
+                  <TableCell key={"itemTotal" + i}>
+                    {Object.values(e.order).map((eOrder, i) => (
                           e.isEdit ? (
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromTotal ${i}`}>
                               <InputForm
                                 onChange={this.handleChangeText}
                                 defaultValue={eOrder.total}
                               />
                             </div>
                           ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromTotal ${i}`}>
                               <p>{eOrder.total} กล่อง</p>
                             </div>
                           ))

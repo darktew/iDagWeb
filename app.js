@@ -10,7 +10,6 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-// https://us-central1-idagdb.cloudfunctions.net/endNotifications
 
 app
   .prepare()
@@ -20,11 +19,10 @@ app
     server.use(bodyParser.json());
 
     server.post('/api/votelist', async(req,res) => {
-      console.log(req.body);
      cron.schedule(`
       ${moment(new Date(req.body.timeCount)).minute()} 
       ${moment(new Date(req.body.timeCount)).hour()} * * *`, () => {
-        axios.post('http://localhost:5000/idagdb/us-central1/endNotifications', {
+        axios.post('https://us-central1-idagdb.cloudfunctions.net/endVote', {
           channelId: req.body.channelId
         }).then((res) => {
           console.log("success");
