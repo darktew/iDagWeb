@@ -24,8 +24,6 @@ export class OrderList extends Component {
     super(props);
     this.state = {
       orderList: [],
-      page: 0,
-      rowsPerPage: 5,
       winnerTitle: "",
       anchorEl: null,
       orderId: "",
@@ -55,7 +53,6 @@ export class OrderList extends Component {
         const userData = await this.getUser();
 
         const orderList = await this.getOrderList(winnerData, userData);
-        console.log(orderList);
         let openAction = [];
         let editOpen = [];
         if (orderList) {
@@ -66,7 +63,7 @@ export class OrderList extends Component {
         }
         !this.unset &&
           this.setState({
-            orderList,
+            orderList: orderList ? orderList : [],
             winnerTitle: Object.values(data)[0].winnerName,
             winnerId: Object.keys(data)[0],
             openAction,
@@ -76,32 +73,35 @@ export class OrderList extends Component {
   };
   getOrderList = (userOrder, userDetail) => {
     return new Promise((resolve, reject) => {
-      const dataUserOrder = Object.values(userOrder[0].userOrder);
-      const keys = Object.keys(userOrder[0].userOrder);
-      const orderUser = keys.map(key => ({ uid: key, ...userOrder[0].userOrder[key] }));
-      const data = userDetail.map((e, i) => {
-        const usingData =
-          orderUser &&
-          orderUser.reduce(
-            (prev, current, index) => {
-              if (e._id === current.uid) {
-                prev.data.uid = e._id;
-                prev.data.fullname = e.fullname;
-                prev.data.order = current.order;
-                prev.data._id = userOrder[0]._id;
-                prev.data.isEdit = false;
-              } else {
-                prev.data.uid = e._id;
-                prev.data.fullname = e.fullname;
-                prev.data._id = userOrder[0]._id;
-                prev.data.isEdit = false;
-              }
-              return prev;
-            },
-            { data: {} }
-          );
-        return usingData.data;
-      });
+      const dataUserOrder = userOrder[0].userOrder ? Object.values(userOrder[0].userOrder) : [];
+      const keys = userOrder[0].userOrder ?  Object.keys(userOrder[0].userOrder): [];
+      const orderUser = keys ? keys.map(key => ({ uid: key, ...userOrder[0].userOrder[key] })) : [];
+      let data;
+      if(orderUser && orderUser.length !== 0) {
+        data = userDetail.map((e, i) => {
+          const usingData =
+            orderUser &&
+            orderUser.reduce(
+              (prev, current, index) => {
+                if (e._id === current.uid) {
+                  prev.data.uid = e._id;
+                  prev.data.fullname = e.fullname;
+                  prev.data.order = current.order;
+                  prev.data._id = userOrder[0]._id;
+                  prev.data.isEdit = false;
+                } else {
+                  prev.data.uid = e._id;
+                  prev.data.fullname = e.fullname;
+                  prev.data._id = userOrder[0]._id;
+                  prev.data.isEdit = false;
+                }
+                return prev;
+              },
+              { data: {} }
+            );
+          return usingData.data;
+        });
+      }
       resolve(data);
     });
   };
@@ -157,12 +157,7 @@ export class OrderList extends Component {
     this.setState({ anchorEl: null, openAction });
   };
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  };
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
+  
   getUser = () => {
     return new Promise((resolve, reject) => {
       database.ref(`user`).on("value", snapshot => {
@@ -174,7 +169,7 @@ export class OrderList extends Component {
     });
   };
   renderItem = () => {
-    const { orderList, anchorEl, total, nameMenu, openAction } = this.state;
+    const { orderList, anchorEl ,total, nameMenu, openAction } = this.state;
     return (
       orderList &&
       orderList.map((e, i) => {
@@ -293,14 +288,14 @@ export class OrderList extends Component {
     this.unset = true;
   }
   render() {
-    const { orderList, page, rowsPerPage, winnerTitle } = this.state;
+    const { orderList,winnerTitle } = this.state;
     return (
       <Container>
         <HeaderChannel>
           <h1>รายการอาหาร</h1>
           <h2>{winnerTitle}</h2>
         </HeaderChannel>
-        <FormVote onSubmit={this.submitForm}>
+          <FormVote onSubmit={this.submitForm}>
           <Table style={{ minWidth: 700 }}>
             <TableHead>
               <TableRow>
@@ -313,21 +308,6 @@ export class OrderList extends Component {
             <TableBody>{this.renderItem()}</TableBody>
           </Table>
         </FormVote>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={orderList.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            "aria-label": "Previous Page"
-          }}
-          nextIconButtonProps={{
-            "aria-label": "Next Page"
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
       </Container>
     );
   }
