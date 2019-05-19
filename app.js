@@ -10,6 +10,8 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+const expoHost = "https://exp.host/--/api/v2/push/send";
+
 
 app
   .prepare()
@@ -18,14 +20,35 @@ app
     server.use(cors({ origin: true, allowedHeaders: true }));
     server.use(bodyParser.json());
 
-    server.post('/api/votelist', async(req,res) => {
+    server.post('/api/sendNotiVote', (req,res) => {
+          const userData = req.body.userData;
+          userData.map((e,i) => {
+              let notiPush = {
+                to: e.tokenUser,
+                title: "เปิดโหวตแล้วไปโหวตได้",
+                body: `เวลาในการโหวต ${req.body.timeLimit} นาที`,
+                sound: "default",
+                channelId: "notice"
+              }
+        axios.post(expoHost, notiPush, {headers: {"Access-Control-Allow-Origin": "*"}}).then((res) => {
+            console.log('sucess')
+          }).catch(err => {
+            console.error(err)
+          }) 
+      }) 
+    })
+
+    server.post('/api/votelist', (req,res) => {
      cron.schedule(`
       ${moment(new Date(req.body.timeCount)).minute()} 
       ${moment(new Date(req.body.timeCount)).hour()} * * *`, () => {
         axios.post('https://us-central1-idagdb.cloudfunctions.net/endVote', {
-          channelId: req.body.channelId
-        }).then((res) => {
+          channelId: req.body.channelId,
+          timeCount: req.body.timeCount
+      }, {headers: {"Access-Control-Allow-Origin": "*"}}).then((res) => {
           console.log("success");
+        }).catch((err) => {
+          console.error(err);
         })
      }, {
        scheduled: true,

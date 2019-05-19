@@ -21,7 +21,7 @@ import Router from 'next/router';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
-
+import AddIcon from '@material-ui/icons/Add';
 
 
 export class VoteList extends Component {
@@ -46,6 +46,7 @@ export class VoteList extends Component {
   }
   async componentDidMount() {
     this.getChannel();
+    // this.sendNotification();
   }
 
   getChannel = (setProps = {}) => {
@@ -104,17 +105,52 @@ export class VoteList extends Component {
   }
   submitFormVote = async e => {
     e.preventDefault();
-    const { timeCount,channelId } = this.state
+    const { timeCount,channelId } = this.state;
+    const userData = await this.getAllUser();
     const setTime = moment().add(timeCount, 'minute');
-    await database.ref(`channel/${channelId}`).update({
+    database.ref(`channel/${channelId}`).update({
       timeCount: setTime.toString(),
       isVote: true
     })
     axios.post(`http://${window.location.host}/api/votelist`, {
       timeCount: setTime.toString(),
-      channelId: channelId
+      channelId: channelId,
     });
+    axios.post(`http://${window.location.host}/api/sendNotiVote`, {
+      userData: userData,
+      timeLimit: timeCount
+    })
+    await localStorage.setItem('timeItem', setTime.toString())
+    this.resetVote(channelId);
     this.getChannel({openVote: false})
+  }
+  getAllUser = () => {
+    return new Promise((resolve, reject) => {
+      database.ref('user').once('value',snapshot => {
+        const data = Object.values(snapshot.val());
+        resolve(data);
+      })
+    })
+  }
+
+  resetVote = (channelId) => {
+    if(moment().days() !==5) {
+      database.ref(`channel/${channelId}/detail`).once('value', snapshot => {
+        snapshot.forEach(chlid => {
+          chlid.ref.update({
+            vote: 0
+          })
+        })
+      })
+    } else {
+      database.ref(`channel/${channelId}/friDayDetail`).once('value', snapshot => {
+        snapshot.forEach(chlid => {
+          chlid.ref.update({
+            vote: 0
+          })
+        })
+      })
+    }
   }
   submitForm = async e => {
     e.preventDefault();
@@ -158,7 +194,7 @@ export class VoteList extends Component {
         onClose={this.handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">{channelName ? "แก้ไขข้อมูล" : "เพิ่มข้อมู,"}</DialogTitle>
+        <DialogTitle id="form-dialog-title">{channelName ? "แก้ไขข้อมูล" : "เพิ่มข้อมูล"}</DialogTitle>
         <form onSubmit={this.submitForm}>
           <DialogContent>
             <DialogContentText>
@@ -333,14 +369,17 @@ export class VoteList extends Component {
     return (
       <Container>
         <HeaderChannel>
-          <button className ="Addnew" onClick={this.openDialogAddnew}>เพิ่มข้อมูลการโหวต</button>
+          <button className ="Addnew" onClick={this.openDialogAddnew}>
+            <AddIcon />
+            เพิ่มรายการโหวต
+          </button>
         </HeaderChannel>
         <Table style={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
-              <TableCell align="left">ChannelName</TableCell>
-              <TableCell align="left">StatusVote</TableCell>
-              <TableCell align="center">action</TableCell>
+              <TableCell align="left">ชื่อรายการโหวต</TableCell>
+              <TableCell align="left">สถานะ</TableCell>
+              <TableCell align="center"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{this.renderItem()}</TableBody>
@@ -395,13 +434,15 @@ const HeaderChannel = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.5vw 5vw 0 0;
   > button.Addnew {
+    display: flex;
+    align-items: center;
     color:white;
-    background-color: #F41B00;
-    width:10vw;
-    font-size:1.5vw;
+    background-color: red;
+    width:auto;
+    font-size:1.1vw;
     border-radius:5px;
+    padding: 0.5vw;
   }
 `
 

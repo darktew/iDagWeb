@@ -42629,6 +42629,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_getPageContext__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../src/getPageContext */ "./src/getPageContext.js");
 /* harmony import */ var next_redux_wrapper__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! next-redux-wrapper */ "./node_modules/next-redux-wrapper/es6/index.js");
 /* harmony import */ var _src_store__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../src/store */ "./src/store/index.js");
+/* harmony import */ var _styles_index_scss__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../styles/index.scss */ "./styles/index.scss");
+/* harmony import */ var _styles_index_scss__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_styles_index_scss__WEBPACK_IMPORTED_MODULE_18__);
+
 
 
 
@@ -42960,5 +42963,5 @@ module.exports = dll_6dc2816e14fab51b8269;
 
 /***/ })
 
-},[["./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2F_app&absolutePagePath=private-next-pages%2F_app.js!./","static/runtime/webpack.js"]]]);
+},[["./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2F_app&absolutePagePath=private-next-pages%2F_app.js!./","static/runtime/webpack.js","styles"]]]);
 //# sourceMappingURL=_app.js.map

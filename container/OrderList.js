@@ -16,107 +16,105 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import Router from "next/router";
 import Menu from "@material-ui/core/Menu";
+import TextField from '@material-ui/core/TextField';
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
+import moment  from "moment";
+import { PDFExport } from "@progress/kendo-react-pdf";
+import _ from 'lodash';
+import auth from '../firebase';
 
 export class OrderList extends Component {
+
+  pdfExportComponent;
   constructor(props) {
     super(props);
     this.state = {
       orderList: [],
       winnerTitle: "",
       anchorEl: null,
-      orderId: "",
       nameMenu: "",
       total: 0,
-      uid: "",
-      winnerId: "",
       openAction: [],
       editOpen: [],
-      indexItem: null
+      userData: [],
+      userId: '',
+      timeItem: '',
+      indexList: null,
+      orderIndex: null
     };
   }
 
   async componentDidMount() {
-    await this.getWinner();
+    await this.getUser();
   }
 
-  getWinner = () => {
-    database
-      .ref(`winner`)
-      .orderByChild(`date`)
-      .startAt(`${new Date().getMonth()} ${new Date().getDay()}`)
-      .on("value", async snapshot => {
-        const data = snapshot.val();
-        const keys = Object.keys(snapshot.val());
-        const winnerData = keys.map(key => ({ _id: key, ...data[key] }));
-        const userData = await this.getUser();
-
-        const orderList = await this.getOrderList(winnerData, userData);
-        let openAction = [];
-        let editOpen = [];
-        if (orderList) {
-          orderList.map((e, i) => {
-            openAction.push(false);
-            editOpen.push(false);
-          });
-        }
-        !this.unset &&
-          this.setState({
-            orderList: orderList ? orderList : [],
-            winnerTitle: Object.values(data)[0].winnerName,
-            winnerId: Object.keys(data)[0],
-            openAction,
-            editOpen
-          });
-      });
-  };
-  getOrderList = (userOrder, userDetail) => {
+  getWinner = async(timeItem) => { 
     return new Promise((resolve, reject) => {
-      const dataUserOrder = userOrder[0].userOrder ? Object.values(userOrder[0].userOrder) : [];
-      const keys = userOrder[0].userOrder ?  Object.keys(userOrder[0].userOrder): [];
-      const orderUser = keys ? keys.map(key => ({ uid: key, ...userOrder[0].userOrder[key] })) : [];
-      let data;
-      if(orderUser && orderUser.length !== 0) {
-        data = userDetail.map((e, i) => {
-          const usingData =
-            orderUser &&
-            orderUser.reduce(
-              (prev, current, index) => {
-                if (e._id === current.uid) {
-                  prev.data.uid = e._id;
-                  prev.data.fullname = e.fullname;
-                  prev.data.order = current.order;
-                  prev.data._id = userOrder[0]._id;
-                  prev.data.isEdit = false;
-                } else {
-                  prev.data.uid = e._id;
-                  prev.data.fullname = e.fullname;
-                  prev.data._id = userOrder[0]._id;
-                  prev.data.isEdit = false;
-                }
-                return prev;
-              },
-              { data: {} }
-            );
-          return usingData.data;
-        });
-      }
-      resolve(data);
+      database
+      .ref('winner')
+      .orderByChild('date')
+      .equalTo(moment(new Date(timeItem)).valueOf())
+      .once('value', snapshot => {
+        const dataWinner = snapshot.val();
+        const keys = Object.keys(dataWinner)
+        const data = keys.map(key => ({_id: key, ...dataWinner[key]}));
+        resolve(data);
+      })
+    })
+  };
+  getUser = async() => {
+    const {editOpen, openAction} = this.state;
+    const time = await localStorage.getItem('timeItem');
+    const dataWinner = await this.getWinner(time);
+    database.ref(`user`).on("value", snapshot => {
+      const data = snapshot.val();
+      const keys = Object.keys(snapshot.val());
+      const userData = keys.map(key => ({ _id: key, ...data[key] }));
+      let orderList = [];
+      userData.reduce((prev,current,index) => {
+        if(current.order && current.order[moment(new Date(time)).valueOf()]) {
+          orderList.push(current.order[moment(new Date(time)).valueOf()]);
+          Object.keys(current.order).map((data, index) => {
+            current.order[data][index].isEditItem = false;
+          })
+        } else { 
+          current.isEdit = false;
+        }
+        editOpen.push(false);
+        openAction.push(false);
+        return prev;
+      }, [])
+      console.log(orderList)
+      const result = _(orderList).flatMap(key => (key[moment(new Date(time)).valueOf()])).groupBy('nameMenu').value();
+      this.setState({
+        winnerId: dataWinner[0]._id,
+        winnerTitle: dataWinner[0].winnerName,
+        userData,
+        editOpen,
+        openAction,
+        orderList: result,
+        timeItem: time
+      })
     });
   };
 
-  editOpen = (index, itemEdit) => {
-    const { openAction, orderList } = this.state;
+  editOpen = (index, itemEdit, data = {}) => {
+    const { openAction, userData, orderIndex,timeItem } = this.state;
+    if(orderIndex) {
+      userData[index].order[moment(new Date(timeItem)).valueOf()][orderIndex - 1].isEditItem = !userData[index].order[moment(new Date(timeItem)).valueOf()][orderIndex - 1].isEditItem;
+    }
     openAction[index] = false;
     itemEdit.isEdit = true;
-    orderList[index] = itemEdit;
-    this.setState({ isEdit: true, anchorEl: null, openAction, orderList });
+    this.setState({ isEdit: true, anchorEl: null, openAction, userData });
   };
   closeEdit = (index) => {
-    const { orderList } = this.state;
-    orderList[index].isEdit = false;
-    this.setState({ orderList });
+    const { userData, orderIndex } = this.state;
+    if(orderIndex) {
+      userData[index].order[moment(new Date(timeItem)).valueOf()][orderIndex - 1].isEditItem = !userData[index].order[moment(new Date(timeItem)).valueOf()][orderIndex - 1].isEditItem;
+    }
+    userData[index].isEdit = false;
+    this.setState({ userData });
   }
   handleChangeText = event => {
     this.setState({ nameMenu: event.target.value });
@@ -124,190 +122,277 @@ export class OrderList extends Component {
   handleChangeTotal = event => {
     this.setState({ total: parseInt(event.target.value) });
   };
-  handleClickMenus = (event, orderId, uid, index) => {
-    const { openAction } = this.state;
+  handleClickMenus = (event, uid, index, indexItem = null) => {
+    const { openAction, userData } = this.state;
     openAction[index] = !openAction[index];
     this.setState({
       anchorEl: event.currentTarget,
-      orderId,
-      uid,
       openAction,
-      indexItem: index
-    });
+      userId: uid,
+      indexList: index,
+      orderIndex: indexItem
+    })
   };
   submitForm = e => {
     e.preventDefault();
-    const { nameMenu, total, winnerId, uid, indexItem, orderList } = this.state;
-    let order = [];
-    order.push({
-      nameMenu,
-      total
-    });
-    database.ref(`winner/${winnerId}/userOrder/${uid}`).update({
-      order,
-      uid
-    });
-    orderList[indexItem].isEdit = false;
-    this.getWinner();
-    this.setState({ orderList });
+    const { nameMenu, total, userId, indexList, userData, orderIndex, timeItem } = this.state;
+    const pushValue = [];
+    if(orderIndex) {
+      database.ref(`user/${userId}/order/${moment(new Date(timeItem)).valueOf()}/${orderIndex - 1}`).update({
+        nameMenu: nameMenu ? nameMenu : userData[indexList].order[moment(new Date(timeItem)).valueOf()][orderIndex - 1].nameMenu,
+        total: total ? total : userData[indexList].order[moment(new Date(timeItem)).valueOf()][orderIndex - 1].total
+      })
+      userData[indexList].order[moment(new Date(timeItem)).valueOf()][orderIndex - 1].isEditItem = false;
+    } else {
+          pushValue.push({
+            nameMenu: nameMenu,
+            total: total
+          })
+      database.ref(`user/${userId}/order/${moment(new Date(timeItem)).valueOf()}`).set(pushValue);
+      userData[indexList].isEdit = false;
+    }
+    this.getUser();
+    this.setState({ userData });
   };
-  handleCloseMenus = index => {
-    const { openAction } = this.state;
+  handleCloseMenus = (index, indexItem = null) => {
+    const { openAction, userData, orderIndex } = this.state;
     openAction[index] = false;
-    this.setState({ anchorEl: null, openAction });
+    this.setState({ anchorEl: null, openAction, userData });
   };
 
   
-  getUser = () => {
-    return new Promise((resolve, reject) => {
-      database.ref(`user`).on("value", snapshot => {
-        const data = snapshot.val();
-        const keys = Object.keys(snapshot.val());
-        const userData = keys.map(key => ({ _id: key, ...data[key] }));
-        resolve(userData);
-      });
-    });
-  };
+  
   renderItem = () => {
-    const { orderList, anchorEl ,total, nameMenu, openAction } = this.state;
-    return (
-      orderList &&
-      orderList.map((e, i) => {
-        return (
-          <TableRow key={"rows" + i}>
-            <TableCell key={"fullname" + i}>{e.fullname}</TableCell>
-            {e.order ? (
-              // e.order.map((eOrder, i) => (
-                <>
-                  <TableCell key={"itemName" + i}>
-                    {Object.values(e.order).map((eOrder, i) => (
-                        e.isEdit ? (
-                          <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromName ${i}`}>
-                            <InputForm
-                              onChange={this.handleChangeText}
-                              defaultValue={eOrder.nameMenu}
-                            />
-                          </div>
-                        ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromName ${i}`}>
-                            <p>{eOrder.nameMenu}</p>
-                          </div>
-                        ))
-                      )
-                    }
-                  </TableCell>
-                  <TableCell key={"itemTotal" + i}>
-                    {Object.values(e.order).map((eOrder, i) => (
-                          e.isEdit ? (
-                            <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromTotal ${i}`}>
-                              <InputForm
-                                onChange={this.handleChangeText}
-                                defaultValue={eOrder.total}
-                              />
-                            </div>
-                          ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column' }} key={`inputFromTotal ${i}`}>
-                              <p>{eOrder.total} กล่อง</p>
-                            </div>
-                          ))
-                        )
-                      }
-                  </TableCell>
-                </>
-            ) : (
-              <>
-                <TableCell key={"itemEdit 3" + i}>
-                  {e.isEdit ? (
-                    <InputForm
-                      onChange={this.handleChangeText}
-                      defaultValue={''}
-                    />
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-                <TableCell key={"itemEdit 4" + i}>
-                  {e.isEdit ? (
-                    <InputForm
-                      onChange={this.handleChangeTotal}
-                      defaultValue={0}
-                      type="number"
-                    />
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-              </>
-            )}
-            <TableCell align="center" key={"icons" + i}>
-              {e.isEdit ? (
-              <>
-                <IconButton key={"editIcon" + i} type="submit">
+    const { userData, anchorEl, openAction, nameMenu, timeItem } = this.state;
+    let rowUser = [], rowTotal = [];
+    userData.map((e,i) => {
+      let tempRowMenu = [], tempRowTotal = [],  tempRowAction = [];
+      if(e.order && e.order[moment(new Date(timeItem)).valueOf()]) {
+        let resultMenu = [], resultTotal = [], resultAction = [] ;
+        Object.values(e.order[moment(new Date(timeItem)).valueOf()]).map((current,index) => {
+          if(current.isEditItem) {
+            resultMenu.push(
+              <TextField key={`nameMenu${index}`} placeholder="เมนูอาหาร" margin="dense" defaultValue={current.nameMenu} onChange={this.handleChangeText}/>
+            )
+            resultTotal.push(
+              <TextField placeholder="จำนวน" key={`total${index}`} type="number" margin="dense" defaultValue={current.total}  onChange={this.handleChangeTotal}/>
+            )
+            resultAction.push(
+              <div key={`actionButton${index}`}>
+                <IconButton key={"editIcon" + index} type="submit">
                   <ActionButton src="../static/image/confirm.png" />
                 </IconButton>
-                <IconButton key={"deleteIcon" + i} onClick={() => this.closeEdit(i)}>
+                <IconButton key={"deleteIcon" + index} onClick={() => this.closeEdit(i)}>
                   <ActionButton src="../static/image/cancel.png" />
                 </IconButton>
-              </> 
-              ) : (
+              </div> 
+            )
+          } else {
+            resultMenu.push(
+              <div key={`cellMenu${index}`}>
+                <p>{current.nameMenu}</p>
+                { current.custom && <p>{`(${current.custom})`}</p> }
+              </div>
+            )
+            resultTotal.push(
+              <div key={`cellTotal${index}`}>
+                 <p>{`${current.total} กล่อง`}</p>
+              </div>
+            )
+            resultAction.push(
+              <div style={{ display: 'flex', justifyContent: 'center' }} key={`action${index}`}>
                 <IconButton
-                  key={"MoreIcon" + i}
-                  aria-owns={anchorEl ? "simple-menu" : "defaults"}
+                  key={"MoreIcon" + index}
+                  aria-owns={anchorEl ? "simple-menu" : undefined}
                   aria-haspopup="true"
                   onClick={event =>
-                    this.handleClickMenus(event, e._id, e.uid, i)
+                    this.handleClickMenus(event, e._id, i, index + 1)
                   }
                 >
                   <MoreIcon />
                 </IconButton>
-              )}
+                <Menu
+                  key={"Menu Items" + i}
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  open={openAction[i]}
+                  onClose={() => this.handleCloseMenus(i)}
+                  >
+                    <MenuItem
+                        onClick={() => this.editOpen(i, e)}
+                        key={`menuButton ${i}`}
+                      >
+                        <ActionButton src="../static/image/pencil-edit-button.png" />
+                      </MenuItem>
+                      <MenuItem onClick={this.deleteOpen}>
+                        <ActionButton src="../static/image/delete.png" />
+                      </MenuItem>
+                  </Menu>
+                </div>
+            )
+          }
+        })
+        tempRowMenu.push(
+          <TableCell key={`haveItemMenu${i}`}>
+            {resultMenu}
+          </TableCell>
+        )
+        tempRowTotal.push(
+          <TableCell key={`haveItemTotal${i}`}>
+            {resultTotal}
+          </TableCell>
+        )
+        tempRowAction.push(
+          <TableCell align="center" key={`action${i}`}>
+            {resultAction}
+          </TableCell>
+        )
+      } else {
+         if(e.isEdit) {
+          tempRowMenu.push(
+          <TableCell key={`noItemInput${i}`}>
+            <TextField placeholder="เมนูอาหาร" margin="dense" onChange={this.handleChangeText}/>
+          </TableCell>
+          )
+          tempRowTotal.push(
+            <TableCell key={`noItemInput${i}`}>
+              <TextField placeholder="จำนวน" type="number" margin="dense" onChange={this.handleChangeTotal}/>
+            </TableCell>
+          )
+          tempRowAction.push(
+            <TableCell align="center" key={`noItemActionForm${i}`}>
+              <IconButton key={"editIcon" + i} type="submit">
+                <ActionButton src="../static/image/confirm.png" />
+              </IconButton>
+              <IconButton key={"deleteIcon" + i} onClick={() => this.closeEdit(i)}>
+                <ActionButton src="../static/image/cancel.png" />
+              </IconButton>
+            </TableCell> 
+          )
+         } else {
+          tempRowMenu.push(<TableCell key={`noItem${i}`}>{`-`}</TableCell>)
+          tempRowTotal.push(<TableCell key={`noItem${i}`}>{`-`}</TableCell>)
+          tempRowAction.push(
+            <TableCell align="center" key={`noItemAction${i}`}>
+              <IconButton
+                key={"MoreIcon" + i}
+                aria-owns={anchorEl ? "simple-menu" : "defaults"}
+                aria-haspopup="true"
+                onClick={event =>
+                  this.handleClickMenus(event, e._id, i)
+                }
+              >
+                <MoreIcon />
+              </IconButton>
               <Menu
-                key={"Menu Items" + i}
-                id="simple-menu"
-                anchorEl={anchorEl}
-                open={openAction[i]}
-                onClose={() => this.handleCloseMenus(i)}
+              key={"Menu Items" + i}
+              id="simple-menu"
+              anchorEl={anchorEl}
+              open={openAction[i]}
+              onClose={() => this.handleCloseMenus(i)}
               >
                 <MenuItem
-                  onClick={() => this.editOpen(i, e)}
-                  key={`menuButton ${i}`}
-                >
-                  <ActionButton src="../static/image/pencil-edit-button.png" />
-                </MenuItem>
-                <MenuItem onClick={this.deleteOpen}>
-                  <ActionButton src="../static/image/delete.png" />
-                </MenuItem>
+                    onClick={() => this.editOpen(i, e)}
+                    key={`menuButton ${i}`}
+                  >
+                    <ActionButton src="../static/image/pencil-edit-button.png" />
+                  </MenuItem>
+                  <MenuItem onClick={this.deleteOpen}>
+                    <ActionButton src="../static/image/delete.png" />
+                  </MenuItem>
               </Menu>
-            </TableCell>
+             </TableCell>
+           )
+         }
+      }
+      rowUser.push(
+          <TableRow key={`row${i}`}>
+            <TableCell >{e.fullname}</TableCell>
+            {tempRowMenu}
+            {tempRowTotal}
+            {tempRowAction}
           </TableRow>
-        );
-      })
-    );
+      )
+    })
+    return rowUser
   };
+  exportPDFWithComponents = () => {
+    this.pdfExportComponent.save();
+  }
+  renderExport = () => {
+    const { orderList, winnerTitle } = this.state;
+    return (
+      <PDFExport
+        ref={component => (this.pdfExportComponent = component)}
+        fileName={`orderlist.pdf`}
+        landscape={false}
+        scale={0.6}
+        margin="10pt"
+        paperSize="A4"
+      >
+        <div className="export">
+          <div className="headerExport">สรุปรายการอาหารทั้งหมด</div>
+          <div className="restaurant">{winnerTitle}</div>
+          {Object.keys(orderList).map((data, index) => (
+            <div className="content">
+              <p>{data}</p>
+              <p>จำนวน <span>{orderList[data].length}</span> กล่อง</p>
+            </div>
+          ))}
+        </div> 
+      </PDFExport>
+    )
+  }
+
   componentWillUnmount() {
     this.unset = true;
   }
   render() {
     const { orderList,winnerTitle } = this.state;
+    console.log("this.state", orderList);
     return (
       <Container>
-        <HeaderChannel>
-          <h1>รายการอาหาร</h1>
-          <h2>{winnerTitle}</h2>
+        <HeaderChannel display={orderList.length === 0 ? "none" : "flex"}>
+          <div className="header">
+            <h1>อาหารกลางวัน</h1>
+            <div className="content">
+              <div className="leftContent">
+              <div className="topic">
+                  <p className="restaurantName">ชื่อร้านอาหาร : <span>{winnerTitle ? winnerTitle : ''}</span></p>
+                </div>
+                <div className="date">
+                  <p>วันที่ : <span>{moment().format('L')}</span></p>
+                </div>
+              </div>
+              <div className="rightContent">
+                <img src="../static/image/pdf-file.png"onClick={this.exportPDFWithComponents} />
+              </div>
+            </div>
+          </div>
         </HeaderChannel>
-          <FormVote onSubmit={this.submitForm}>
-          <Table style={{ minWidth: 700 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">username</TableCell>
-                <TableCell align="left">menu</TableCell>
-                <TableCell align="left">amount</TableCell>
-                <TableCell align="center">action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{this.renderItem()}</TableBody>
-          </Table>
-        </FormVote>
+        {
+          orderList && orderList.length === 0? 
+          <div>
+            <h1>ไม่พบการสั่งสิ้นค้า</h1>
+          </div>
+          :
+          <Content className="orderMenu">
+            <form onSubmit={this.submitForm}>
+              <Table style={{ minWidth: 700 }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left">ชื่อผู้ใช้</TableCell>
+                    <TableCell align="left">เมนูอาหาร</TableCell>
+                    <TableCell align="left">จำนวน</TableCell>
+                    <TableCell align="center"></TableCell>
+                  </TableRow>
+                </TableHead> 
+                <TableBody>{this.renderItem()}</TableBody>
+              </Table>
+            </form>
+            {this.renderExport()}
+          </Content>
+        }
       </Container>
     );
   }
@@ -333,27 +418,85 @@ const InputForm = styled.input`
   margin: 1vw;
 `;
 
+const Export = styled.div`
+  display:flex;
+  justify-content: flex-end;
+  align-items: center;
+  > img {
+    width: 1.7vw;
+    height: auto;
+    margin-right: 4vw;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+`
+
 const HeaderChannel = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 0.5vw 5vw 0 0;
-  > h1 {
-    margin: 0;
+  width:100%;
+  > div.header {
+    width: 100%;
   }
-  > button.Addnew {
-    color: white;
-    background-color: #f41b00;
-    width: 10vw;
-    font-size: 1.5vw;
-    border-radius: 5px;
+  > div.header > div.content {
+    display: flex;
+    flex: 1;
+  }
+  > div.header > div.content > div.leftContent {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+  }
+  > div.header > div.content > div.leftContent > div.topic {
+    display: flex;
+    align-items:center;
+    margin-right: 5vw;
+  }
+  > div.header > div.content > div.leftContent > div.topic > p {
+    margin: 0;
+    font-size: 1.3vw;
+  }
+  > div.header > div.content > div.leftContent > div.date > p {
+    margin: 0;
+    font-size: 1.3vw;
+  } 
+  > div.header > div.content > div.rightContent {
+    flex: 1;
+    display: flex;
+    align-items:center;
+    justify-content: flex-end;
+  }
+  > div.header > div.content > div.rightContent > img {
+    width: 2vw;
+    height: auto;
+    margin-right: 3vw;
+    display: ${props => props.display || 'flex'};
+    &:hover {
+      cursor: pointer;
+    }
   }
 `;
 
-const FormVote = styled.form`
-  width: 100%;
-`;
+const Content = styled.div`
+  > div > div.export > div.headerExport {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 2vw 0;
+  }
+  > div > div.export > div.restaurant {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 1vw 0;
+  }
+  > div > div.export > div.content {
+    display: -webkit-box;
+    width: 50%;
+  }
+  > div > div.export > div.content > p {
+    width: 50%;
+  }
+`
+
 const FormInput = styled.div``;
 
 const InputVote = styled.input`

@@ -1083,6 +1083,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var next_redux_wrapper__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! next-redux-wrapper */ "next-redux-wrapper");
 /* harmony import */ var next_redux_wrapper__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(next_redux_wrapper__WEBPACK_IMPORTED_MODULE_16__);
 /* harmony import */ var _src_store__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../src/store */ "./src/store/index.js");
+/* harmony import */ var _styles_index_scss__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../styles/index.scss */ "./styles/index.scss");
+/* harmony import */ var _styles_index_scss__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_styles_index_scss__WEBPACK_IMPORTED_MODULE_18__);
+
 
 
 
@@ -1406,6 +1409,22 @@ var initStore = function initStore() {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (initStore);
+
+/***/ }),
+
+/***/ "./styles/index.scss":
+/*!***************************!*\
+  !*** ./styles/index.scss ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {
+	"export": "export",
+	"headerExport": "headerExport",
+	"restaurant": "restaurant",
+	"content": "content"
+};
 
 /***/ }),
 

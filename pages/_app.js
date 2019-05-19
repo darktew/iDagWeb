@@ -8,6 +8,7 @@ import JssProvider from "react-jss/lib/JssProvider";
 import getPageContext  from "../src/getPageContext";
 import withRedux from "next-redux-wrapper";
 import initStore from "../src/store";
+import "../styles/index.scss";
 
 const MyApp = withRedux(initStore)(
   class MyApp extends App {
