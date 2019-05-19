@@ -6,14 +6,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import TablePagination from "@material-ui/core/TablePagination";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "@material-ui/core/Button";
 import Router from "next/router";
 import Menu from "@material-ui/core/Menu";
 import TextField from '@material-ui/core/TextField';
@@ -23,6 +16,8 @@ import moment  from "moment";
 import { PDFExport } from "@progress/kendo-react-pdf";
 import _ from 'lodash';
 import auth from '../firebase';
+import swal from 'sweetalert';
+
 
 export class OrderList extends Component {
 
@@ -317,7 +312,12 @@ export class OrderList extends Component {
     return rowUser
   };
   exportPDFWithComponents = () => {
-    this.pdfExportComponent.save();
+    const { orderList } = this.state;
+    if(orderList && orderList.length > 1) {
+      this.pdfExportComponent.save();
+    } else {
+      swal('ยังไม่มีคนสั่งข้าว')
+    }
   }
   renderExport = () => {
     const { orderList, winnerTitle } = this.state;
@@ -365,7 +365,7 @@ export class OrderList extends Component {
                 </div>
               </div>
               <div className="rightContent">
-                <img src="../static/image/pdf-file.png"onClick={this.exportPDFWithComponents} />
+                <img src="../static/image/pdf-file.png" onClick={this.exportPDFWithComponents} />
               </div>
             </div>
           </div>
