@@ -68,8 +68,8 @@ export class OrderList extends Component {
       const userData = keys.map(key => ({ _id: key, ...data[key] }));
       let orderList = [];
       userData.reduce((prev,current,index) => {
-        if(current.order && current.order[moment(new Date(time)).valueOf()]) {
-          orderList.push(current.order[moment(new Date(time)).valueOf()]);
+        if(current.order) {
+          orderList.push(current.order);
           Object.keys(current.order).map((data, index) => {
             current.order[data][index].isEditItem = false;
           })
@@ -80,8 +80,7 @@ export class OrderList extends Component {
         openAction.push(false);
         return prev;
       }, [])
-      console.log(orderList)
-      const result = _(orderList).flatMap(key => (key[moment(new Date(time)).valueOf()])).groupBy('nameMenu').value();
+      const result = orderList[moment(new Date(time)).valueOf()] ? _(orderList).flatMap(key => (key[moment(new Date(time)).valueOf()])).groupBy('nameMenu').value() : [];
       this.setState({
         winnerId: dataWinner[0]._id,
         winnerTitle: dataWinner[0].winnerName,
@@ -118,7 +117,7 @@ export class OrderList extends Component {
     this.setState({ total: parseInt(event.target.value) });
   };
   handleClickMenus = (event, uid, index, indexItem = null) => {
-    const { openAction, userData } = this.state;
+    const { openAction } = this.state;
     openAction[index] = !openAction[index];
     this.setState({
       anchorEl: event.currentTarget,
@@ -158,8 +157,8 @@ export class OrderList extends Component {
   
   
   renderItem = () => {
-    const { userData, anchorEl, openAction, nameMenu, timeItem } = this.state;
-    let rowUser = [], rowTotal = [];
+    const { userData, anchorEl, openAction, timeItem } = this.state;
+    let rowUser = [];
     userData.map((e,i) => {
       let tempRowMenu = [], tempRowTotal = [],  tempRowAction = [];
       if(e.order && e.order[moment(new Date(timeItem)).valueOf()]) {
@@ -334,7 +333,7 @@ export class OrderList extends Component {
           <div className="headerExport">สรุปรายการอาหารทั้งหมด</div>
           <div className="restaurant">{winnerTitle}</div>
           {Object.keys(orderList).map((data, index) => (
-            <div className="content">
+            <div className="content" key={`orderMenu${index}`}>
               <p>{data}</p>
               <p>จำนวน <span>{orderList[data].length}</span> กล่อง</p>
             </div>
@@ -349,7 +348,6 @@ export class OrderList extends Component {
   }
   render() {
     const { orderList,winnerTitle } = this.state;
-    console.log("this.state", orderList);
     return (
       <Container>
         <HeaderChannel display={orderList.length === 0 ? "none" : "flex"}>
