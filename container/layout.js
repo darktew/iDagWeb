@@ -71,13 +71,13 @@ class Layout extends Component {
           <Toolbar>
             <LeftHeader>
               <Logo
-                src="../static/image/dish.png"
+                src="../static/image/iDAG_logo_E.png"
                 onClick={() => Router.push({ pathname: "/home" })}
               />
             </LeftHeader>
             <LeftHeader flexDirection="column" justifyContent="flex-end">
               <UserMenu>
-                <Logo src="../static/image/dish.png" />
+                <LogoUser src="../static/image/dish.png" />
                 <TextuserName>{user.displayName}</TextuserName>
               </UserMenu>
               <Menu
@@ -139,10 +139,15 @@ const LeftHeader = styled.div`
   flex-direction: ${props => props.flexDirection || "row"};
 `;
 const Logo = styled.img`
+  width: 3.5vw;
+  height: 3.5vw;
+  cursor: pointer;
+`;
+const LogoUser = styled.img`
   width: 2vw;
   height: 2vw;
   cursor: pointer;
-`;
+`
 const UserMenu = styled.div`
   display: flex;
   align-items: center;

@@ -1,4 +1,22 @@
 {
   "presets": ["next/babel"],
-  "plugins": [["styled-components", { "ssr": true }]]
+  "env": {
+    "development": {
+      "plugins": [
+        ["styled-components", {
+          "displayName": true,
+          "ssr": true
+        }]
+      ]
+    },
+    "production": {
+      "plugins": [
+        "@babel/plugin-transform-react-inline-elements",
+        ["styled-components", {
+          "displayName": false,
+          "ssr": true
+        }]
+      ]
+    }
+  }
 }

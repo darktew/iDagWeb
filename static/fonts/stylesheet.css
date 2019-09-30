@@ -1,0 +1,31 @@
+@font-face {
+  font-family: 'rsulight !important';
+  src: url('rsu_light-webfont.woff2') format('woff2'),
+       url('rsu_light-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Font Awesome Solid';
+  font-style: normal;
+  font-weight: 900;
+  src: url('fa-solid-900.eot');
+  src: url('fa-solid-900.eot?#iefix') format('embedded-opentype'),
+  url('fa-solid-900.woff2') format('woff2'),
+  url('fa-solid-900.woff') format('woff'),
+  url('fa-solid-900.ttf') format('truetype'),
+  url('fa-solid-900.svg#fontawesome') format('svg');
+}
+
+@font-face {
+  font-family: 'Font Awesome Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fa-regular-400.eot');
+  src: url('fa-regular-400.eot?#iefix') format('embedded-opentype'),
+  url('fa-regular-400.woff2') format('woff2'),
+  url('fa-regular-400.woff') format('woff'),
+  url('fa-regular-400.ttf') format('truetype'),
+  url('fa-regular-400.svg#fontawesome') format('svg');
+}

@@ -1,0 +1,101 @@
+@font-face {
+  font-family: "RSU";
+  src: url("/static/fonts/rsu_regular-webfont.eot");
+  src: url("/static/fonts/rsu_regular-webfont.eot?#iefix")
+      format("embedded-opentype"),
+    url("/static/fonts/rsu_regular-webfont.woff2") format("woff2"),
+    url("/static/fonts/rsu_regular-webfont.woff") format("woff"),
+    url("/static/fonts/rsu_regular-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RSU-Light";
+  src: url("/static/fonts/RSUlight.eot");
+  src: url("/static/fonts/RSUlight.eot?#iefix") format("embedded-opentype"),
+    url("/static/fonts/RSUlight.woff2") format("woff2"),
+    url("/static/fonts/RSUlight.woff") format("woff"),
+    url("/static/fonts/RSUlight.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RSU-Bold";
+  src: url("/static/fonts/RSUBOLD.eot");
+  src: url("/static/fonts/RSUBOLD.eot?#iefix") format("embedded-opentype"),
+    url("/static/fonts/RSUBOLD.woff2") format("woff2"),
+    url("/static/fonts/RSUBOLD.woff") format("woff"),
+    url("/static/fonts/RSUBOLD.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Font Awesome Solid";
+  font-style: normal;
+  font-weight: 900;
+  src: url("/static/fonts/fa-solid-900.eot");
+  src: url("/static/fonts/fa-solid-900.eot?#iefix") format("embedded-opentype"),
+    url("/static/fonts/fa-solid-900.woff2") format("woff2"),
+    url("/static/fonts/fa-solid-900.woff") format("woff"),
+    url("/static/fonts/fa-solid-900.ttf") format("truetype"),
+    url("/static/fonts/fa-solid-900.svg#fontawesome") format("svg");
+}
+
+@font-face {
+  font-family: "Font Awesome Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/static/fonts/fa-regular-400.eot");
+  src: url("/static/fonts/fa-regular-400.eot?#iefix")
+      format("embedded-opentype"),
+    url("/static/fonts/fa-regular-400.woff2") format("woff2"),
+    url("/static/fonts/fa-regular-400.woff") format("woff"),
+    url("/static/fonts/fa-regular-400.ttf") format("truetype"),
+    url("/static/fonts/fa-regular-400.svg#fontawesome") format("svg");
+}
+
+p {
+  font-family: "RSU" !important;
+}
+h1,h2,h3,h4,h5,h6 {
+  font-family: "RSU-Bold" !important;
+}
+th, td {
+  font-family: "RSU" !important;
+}
+button {
+  font-family: "RSU" !important;
+}
+div {
+  font-family: "RSU" !important;
+}
+input {
+  font-family: "RSU" !important;
+}
+span {
+  font-family: "RSU" !important;
+}
+
+kendo-pdf-document p {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 18px;
+  flex: 1;
+}
+kendo-pdf-document div.export {
+  margin: 2vw;
+}
+kendo-pdf-document div.export > div.headerExport {
+  font-size: 24px;
+  margin: 2vw 0;
+}
+kendo-pdf-document div.export > div.restaurant {
+  font-size: 18px;
+  margin: 1vw 0;
+}
+kendo-pdf-document div.export > div.content {
+  display: flex;
+  width: 50%;
+}
