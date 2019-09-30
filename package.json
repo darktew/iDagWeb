@@ -33,6 +33,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-jss": "^8.6.1",
+    "react-native-awesome-alerts": "^1.2.0",
     "react-redux": "^7.0.3",
     "react-router-dom": "^5.0.0",
     "recompose": "^0.30.0",

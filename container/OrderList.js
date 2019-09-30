@@ -44,7 +44,7 @@ export class OrderList extends Component {
     await this.getUser();
   }
 
-  getWinner = async(timeItem) => { 
+  getWinner = async(timeItem) => {
     return new Promise((resolve, reject) => {
       database
       .ref('winner')
@@ -52,7 +52,7 @@ export class OrderList extends Component {
       .equalTo(moment(new Date(timeItem)).valueOf())
       .once('value', snapshot => {
         const dataWinner = snapshot.val();
-        const keys = Object.keys(dataWinner)
+        const keys = dataWinner ? Object.keys(dataWinner) : [];
         const data = keys.map(key => ({_id: key, ...dataWinner[key]}));
         resolve(data);
       })
@@ -68,11 +68,14 @@ export class OrderList extends Component {
       const userData = keys.map(key => ({ _id: key, ...data[key] }));
       let orderList = [];
       userData.reduce((prev,current,index) => {
-        if(current.order) {
-          orderList.push(current.order);
+        if(current.order && current.order[`${moment(new Date(time)).valueOf()}`]) {
           Object.keys(current.order).map((data, index) => {
-            current.order[data][index].isEditItem = false;
+              current.order[data].map((e,i) => {
+                e.isEditItem = false
+              })   
           })
+          // orderList = current.order[`${moment(new Date(time)).valueOf()}`];
+          orderList.push(current.order[`${moment(new Date(time)).valueOf()}`])
         } else { 
           current.isEdit = false;
         }
@@ -80,10 +83,10 @@ export class OrderList extends Component {
         openAction.push(false);
         return prev;
       }, [])
-      const result = orderList[moment(new Date(time)).valueOf()] ? _(orderList).flatMap(key => (key[moment(new Date(time)).valueOf()])).groupBy('nameMenu').value() : [];
+      const result = orderList ? _(orderList).flatMap(key => (key)).groupBy('nameMenu').value() : [];
       this.setState({
-        winnerId: dataWinner[0]._id,
-        winnerTitle: dataWinner[0].winnerName,
+        winnerId: dataWinner && dataWinner[0] && dataWinner[0]._id,
+        winnerTitle: dataWinner && dataWinner[0] && dataWinner[0].winnerName,
         userData,
         editOpen,
         openAction,
@@ -312,7 +315,7 @@ export class OrderList extends Component {
   };
   exportPDFWithComponents = () => {
     const { orderList } = this.state;
-    if(orderList && orderList.length > 1) {
+    if(orderList) {
       this.pdfExportComponent.save();
     } else {
       swal('ยังไม่มีคนสั่งข้าว')
@@ -348,6 +351,7 @@ export class OrderList extends Component {
   }
   render() {
     const { orderList,winnerTitle } = this.state;
+    console.log("orderList",orderList);
     return (
       <Container>
         <HeaderChannel display={orderList.length === 0 ? "none" : "flex"}>

@@ -294,6 +294,7 @@ export class VoteList extends Component {
                 <InputVote
                   defaultValue={timeCount ? timeCount : ''}
                   onChange={this.handleTimeCount}
+                  type="number"
                   required
                 />
                 <p>นาที</p>
@@ -456,5 +457,5 @@ const InputVote = styled.input`
   padding: 1vw;
   margin: 1vw;
   height: 3vw;
-  width: 3vw;
+  width: 7vw;
 `
